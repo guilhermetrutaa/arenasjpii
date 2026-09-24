@@ -40,7 +40,8 @@ export default function ResultClient() {
 
   useEffect(() => {
     if (!token) return;
-    const url = `${window.location.origin}/ranking?token=${encodeURIComponent(token)}`;
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://arenasjpii.vercel.app";
+    const url = `${siteUrl.replace(/\/$/, "")}/ranking?token=${encodeURIComponent(token)}`;
     void QRCode.toDataURL(url, { width: 280, margin: 2, color: { dark: "#14345d", light: "#ffffff" } }).then(setQrCode);
   }, [token]);
 
