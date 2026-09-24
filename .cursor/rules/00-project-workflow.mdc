@@ -1,0 +1,18 @@
+---
+description: Spec-Driven Development workflow for Arena SJPII
+alwaysApply: true
+---
+
+# Project workflow
+
+Before editing code, styles, configuration, or assets:
+
+1. Read `Specs/README.md` and the relevant document under `Specs/active/`.
+2. Read `Specs/decisions.md` and `Specs/changes.md` when the work could affect
+   an established decision or existing behavior.
+3. Keep the implementation inside the approved scope. If scope is unclear,
+   ask before implementing.
+4. Update the relevant Spec before a material implementation change, then log
+   the completed change in `Specs/changes.md`.
+
+Never overwrite unrelated user changes. Prefer small, verifiable changes.

@@ -1,0 +1,13 @@
+---
+description: Figma fidelity, local assets, and typography requirements
+globs: ["app/**/*.{ts,tsx,css}", "public/**/*"]
+---
+
+# Design implementation rules
+
+Use the approved Figma screen documented in the active Spec as the visual
+reference. Reuse the supplied local assets from `public/`; do not replace them
+with remote substitutes. `public/background-fundo.png` is the page background.
+
+Use the Syne font for game-related text. Record any intentional visual
+departure from Figma in the relevant Spec and in `Specs/decisions.md`.

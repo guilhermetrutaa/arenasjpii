@@ -1,26 +1,51 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+:root { --ink: #14345d; --gold: #edd686; }
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body { margin: 0; background: #f5f4f1; color: var(--ink); }
+img { display: block; max-width: 100%; }
+
+.arena-page {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #f5f4f1 url("/background-fundo.png") center / cover no-repeat;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.arena-canvas { position: relative; width: min(100vw, calc(100dvh * 1.5384615385)); aspect-ratio: 1280 / 832; container-type: inline-size; }
+.saint-image { position: absolute; z-index: 1; top: 12.38%; left: -0.94%; width: 47.5%; height: 87.62%; object-fit: contain; object-position: left bottom; }
+.arena-header { position: absolute; inset: 0; z-index: 2; }
+.arena-logo { position: absolute; top: 6.97%; left: 58.13%; width: 28.2%; height: 30.29%; object-fit: contain; }
+.sjpii-crest { position: absolute; top: 13.1%; left: 50.31%; width: 6.56%; height: 13.94%; object-fit: contain; }
+.diocese-crest { position: absolute; top: 14.78%; left: 87.89%; width: 6.8%; height: 12.26%; object-fit: contain; }
+.games { position: absolute; z-index: 3; top: 42.43%; left: 47.81%; display: flex; gap: 2.03cqw; }
+.game-card { width: 23.75cqw; text-align: center; color: inherit; text-decoration: none; }
+.game-card:focus-visible { outline: 3px solid var(--ink); outline-offset: 6px; border-radius: 4px; }
+.game-card img { width: 100%; aspect-ratio: 304 / 392; object-fit: cover; }
+.game-card h2 { margin: 0.39cqw 0 0; color: var(--ink); font-family: var(--font-syne), sans-serif; font-size: 1.875cqw; font-weight: 700; line-height: 1.25; letter-spacing: -0.055cqw; white-space: nowrap; }
+
+@media (max-width: 900px) {
+  .arena-page { overflow: auto; place-items: start center; background-size: auto 100%; }
+  .arena-canvas { width: 100%; min-height: 100dvh; aspect-ratio: auto; padding: 30px 24px 48px; display: flex; flex-direction: column; align-items: center; }
+  .saint-image { position: relative; order: 2; top: auto; left: auto; width: min(74vw, 480px); height: auto; margin: 20px 0 -10px; }
+  .arena-header { position: relative; order: 1; inset: auto; width: min(100%, 560px); height: 184px; }
+  .arena-logo { top: 0; left: 50%; width: min(64vw, 310px); height: 180px; transform: translateX(-50%); }
+  .sjpii-crest { top: 42px; left: 2%; width: 54px; height: 75px; }
+  .diocese-crest { top: 49px; right: 2%; left: auto; width: 56px; height: 66px; }
+  .games { position: relative; order: 3; top: auto; left: auto; width: 100%; justify-content: center; flex-wrap: wrap; gap: 24px; }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media (max-width: 650px) {
+  .arena-canvas { padding-inline: 16px; }
+  .arena-header { height: 144px; }
+  .arena-logo { width: min(66vw, 265px); height: 144px; }
+  .sjpii-crest { top: 35px; width: 43px; height: 59px; }
+  .diocese-crest { top: 39px; width: 45px; height: 53px; }
+  .saint-image { width: min(88vw, 420px); margin-top: 12px; }
+  .games { gap: 22px; }
+  .game-card { width: min(78vw, 304px); }
+  .game-card img { width: 100%; height: auto; aspect-ratio: 304 / 392; }
+  .game-card h2 { font-size: clamp(19px, 5.2vw, 24px); white-space: normal; }
 }

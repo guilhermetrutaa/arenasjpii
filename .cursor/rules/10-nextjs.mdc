@@ -1,0 +1,14 @@
+---
+description: Next.js conventions and project safety
+globs: ["app/**/*.{ts,tsx,css}", "next.config.ts", "package.json"]
+---
+
+# Next.js rules
+
+This project uses Next.js 16. Before writing or changing Next.js code, read
+the relevant guide in `node_modules/next/dist/docs/`; APIs and conventions may
+differ from earlier releases. Follow the existing App Router structure and
+preserve the generated Next.js agent-rules block in `AGENTS.md`.
+
+Do not add dependencies unless the active Spec requires them and the decision
+is recorded in `Specs/decisions.md`.
