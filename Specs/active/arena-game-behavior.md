@@ -14,6 +14,32 @@ folder remains reference-only and must not be modified.
 - Game values must be rendered by the client game state; the static placeholder
   values in the visual reference are not the final runtime values.
 
+## Palavra Proibida deck
+
+- The deck in `src/data/forbidden-cards.ts` favors widely known names so the
+  game stays accessible to a general Catholic audience.
+- Saints: only popular saints, Marian titles, archangels, and apostles; obscure
+  saints (e.g. São Frutuoso, São Guido, São Policarpo, Santo Hilário) are
+  excluded.
+- Priests and religious: nationally known priests plus the local references
+  Dom Dulcênio, Padre Nilson Nunes, and Padre Rodolfo Lucena.
+- Liturgical objects: only commonly known items (Bíblia, Hóstia, Altar,
+  Cálice, Sacrário, Rosário, Pia Batismal, Ostensório).
+- Churches of Campina Grande: Catedral de Nossa Senhora da Conceição, Igreja
+  de São José, Igreja de Nossa Senhora do Rosário, Paróquia São João Paulo II,
+  and Paróquia Nossa Senhora de Fátima.
+- Forbidden words of the remaining cards are unchanged.
+
+## Printable card sheet
+
+- `/palavra-proibida/cartas` renders every card of the deck on A4 pages for
+  printing or "Save as PDF".
+- The cover shows the Arena logo, the São João Paulo II and Diocese crests,
+  the title `PALAVRA PROIBIDA`, the rules, and the card count per category.
+- Cards are grouped by category, each group starting on a new page; each card
+  shows its target word, the five forbidden words, and the Arena branding.
+- The layout must remain legible without printed background graphics.
+
 ## Air Mouse and headset controls
 
 - The on-screen action buttons are removed from both games.
