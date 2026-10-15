@@ -17,11 +17,12 @@ img { display: block; max-width: 100%; }
 .arena-canvas { position: relative; width: min(100vw, calc(100dvh * 1.5384615385)); aspect-ratio: 1280 / 832; container-type: inline-size; }
 .saint-image { position: absolute; z-index: 1; top: 12.38%; left: -0.94%; width: 47.5%; height: 87.62%; object-fit: contain; object-position: left bottom; }
 .arena-header { position: absolute; inset: 0; z-index: 2; }
-.arena-logo { position: absolute; top: 6.97%; left: 58.13%; width: 28.2%; height: 30.29%; object-fit: contain; }
-.sjpii-crest { position: absolute; top: 13.1%; left: 50.31%; width: 6.56%; height: 13.94%; object-fit: contain; }
-.diocese-crest { position: absolute; top: 14.78%; left: 87.89%; width: 6.8%; height: 12.26%; object-fit: contain; }
-.games { position: absolute; z-index: 3; top: 42.43%; left: 47.81%; display: flex; gap: 2.03cqw; }
-.game-card { width: 23.75cqw; text-align: center; color: inherit; text-decoration: none; }
+.arena-logo { position: absolute; top: 4.6%; left: 60.73%; width: 23%; height: 24.7%; object-fit: contain; }
+.arena-promo { position: absolute; top: 32.5%; left: 52.23%; width: 40%; height: 12.04%; object-fit: contain; }
+.sjpii-crest { position: absolute; top: 10.43%; left: 53.5%; width: 5.2%; height: 11.05%; object-fit: contain; }
+.diocese-crest { position: absolute; top: 11.08%; left: 86.5%; width: 5.4%; height: 9.74%; object-fit: contain; }
+.games { position: absolute; z-index: 3; top: 48%; left: 49.01%; display: flex; gap: 2.03cqw; }
+.game-card { width: 22.2cqw; text-align: center; color: inherit; text-decoration: none; }
 .game-card:focus-visible { outline: 3px solid var(--ink); outline-offset: 6px; border-radius: 4px; }
 .game-card img { width: 100%; aspect-ratio: 304 / 392; object-fit: cover; }
 .game-card h2 { margin: 0.39cqw 0 0; color: var(--ink); font-family: var(--font-syne), sans-serif; font-size: 1.875cqw; font-weight: 700; line-height: 1.25; letter-spacing: -0.055cqw; white-space: nowrap; }
@@ -30,19 +31,21 @@ img { display: block; max-width: 100%; }
   .arena-page { overflow: auto; place-items: start center; background-size: auto 100%; }
   .arena-canvas { width: 100%; min-height: 100dvh; aspect-ratio: auto; padding: 30px 24px 48px; display: flex; flex-direction: column; align-items: center; }
   .saint-image { position: relative; order: 2; top: auto; left: auto; width: min(74vw, 480px); height: auto; margin: 20px 0 -10px; }
-  .arena-header { position: relative; order: 1; inset: auto; width: min(100%, 560px); height: 184px; }
-  .arena-logo { top: 0; left: 50%; width: min(64vw, 310px); height: 180px; transform: translateX(-50%); }
-  .sjpii-crest { top: 42px; left: 2%; width: 54px; height: 75px; }
-  .diocese-crest { top: 49px; right: 2%; left: auto; width: 56px; height: 66px; }
+  .arena-header { position: relative; order: 1; inset: auto; width: min(100%, 560px); height: 300px; }
+  .arena-logo { top: 0; left: 50%; width: min(58vw, 272px); height: 190px; transform: translateX(-50%); }
+  .arena-promo { top: 204px; left: 50%; width: min(84vw, 440px); height: auto; aspect-ratio: 1891 / 370; transform: translateX(-50%); }
+  .sjpii-crest { top: 46px; left: 3%; width: 46px; height: 64px; }
+  .diocese-crest { top: 51px; right: 3%; left: auto; width: 48px; height: 56px; }
   .games { position: relative; order: 3; top: auto; left: auto; width: 100%; justify-content: center; flex-wrap: wrap; gap: 24px; }
 }
 
 @media (max-width: 650px) {
   .arena-canvas { padding-inline: 16px; }
-  .arena-header { height: 144px; }
-  .arena-logo { width: min(66vw, 265px); height: 144px; }
-  .sjpii-crest { top: 35px; width: 43px; height: 59px; }
-  .diocese-crest { top: 39px; width: 45px; height: 53px; }
+  .arena-header { height: 215px; }
+  .arena-logo { width: min(60vw, 240px); height: 120px; }
+  .arena-promo { top: 132px; width: min(90vw, 360px); }
+  .sjpii-crest { top: 30px; left: 2%; width: 36px; height: 50px; }
+  .diocese-crest { top: 34px; right: 2%; width: 38px; height: 45px; }
   .saint-image { width: min(88vw, 420px); margin-top: 12px; }
   .games { gap: 22px; }
   .game-card { width: min(78vw, 304px); }

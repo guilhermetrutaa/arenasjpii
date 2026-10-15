@@ -19,6 +19,7 @@ export default function Home() {
         <header className="arena-header">
           <img className="sjpii-crest" src="/brasao-sjpii.svg" alt="Brasão de São João Paulo II" />
           <img className="arena-logo" src="/logo.svg" alt="Arena SJPII" />
+          <img className="arena-promo" src="/jogue-de-graça.svg" alt="Jogue de graça e ganhe um prêmio" />
           <img className="diocese-crest" src="/brasao-diocese.svg" alt="Brasão da Diocese" />
         </header>
 
