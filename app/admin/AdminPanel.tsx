@@ -54,6 +54,9 @@ type GameCardProps = {
 };
 
 function GameCard({ game, label, short, state, heard, online, selected, onSelect, onCommand }: GameCardProps) {
+  const [flash, setFlash] = useState<ControlCommandAction | null>(null);
+  const flashTimerRef = useRef<number | null>(null);
+  const pointerGuardRef = useRef(0);
   const live = online && state?.started === true;
   const status = !online
     ? "aguardando o jogo"
@@ -62,6 +65,30 @@ function GameCard({ game, label, short, state, heard, online, selected, onSelect
       : state?.started
         ? "em andamento"
         : "tela aberta";
+
+  useEffect(
+    () => () => {
+      if (flashTimerRef.current !== null) window.clearTimeout(flashTimerRef.current);
+    },
+    [],
+  );
+
+  // The panel re-renders several times per second while a game streams its
+  // state, so waiting for `mouseup` to resolve a `click` risks losing the
+  // press entirely. Acknowledge locally on `pointerdown` instead, and keep
+  // `click` for keyboard activation only.
+  const fire = useCallback(
+    (action: ControlCommandAction) => {
+      onCommand(action);
+      setFlash(action);
+      if (flashTimerRef.current !== null) window.clearTimeout(flashTimerRef.current);
+      flashTimerRef.current = window.setTimeout(() => {
+        flashTimerRef.current = null;
+        setFlash(null);
+      }, 240);
+    },
+    [onCommand],
+  );
 
   return (
     <section className={`${styles.card} ${selected ? styles.cardActive : ""}`} data-game={game}>
@@ -112,13 +139,63 @@ function GameCard({ game, label, short, state, heard, online, selected, onSelect
       </p>
 
       <div className={styles.actions}>
-        <button type="button" className={`${styles.action} ${styles.actionHit}`} onClick={() => onCommand("hit")} disabled={!selected}>
+        <button
+          type="button"
+          className={`${styles.action} ${styles.actionHit} ${flash === "hit" ? styles.actionFired : ""}`}
+          onPointerDown={(event) => {
+            event.preventDefault();
+            pointerGuardRef.current = Date.now();
+            fire("hit");
+          }}
+          onClick={() => {
+            // Browsers that still emit `click` after a prevented `pointerdown`
+            // would otherwise send the command twice.
+            if (Date.now() - pointerGuardRef.current < 600) {
+              pointerGuardRef.current = 0;
+              return;
+            }
+            fire("hit");
+          }}
+          disabled={!selected}
+        >
           ACERTO <em>PageUp</em>
         </button>
-        <button type="button" className={`${styles.action} ${styles.actionSkip}`} onClick={() => onCommand("skip")} disabled={!selected}>
+        <button
+          type="button"
+          className={`${styles.action} ${styles.actionSkip} ${flash === "skip" ? styles.actionFired : ""}`}
+          onPointerDown={(event) => {
+            event.preventDefault();
+            pointerGuardRef.current = Date.now();
+            fire("skip");
+          }}
+          onClick={() => {
+            if (Date.now() - pointerGuardRef.current < 600) {
+              pointerGuardRef.current = 0;
+              return;
+            }
+            fire("skip");
+          }}
+          disabled={!selected}
+        >
           PULAR <em>PageDown</em>
         </button>
-        <button type="button" className={`${styles.action} ${styles.actionFault}`} onClick={() => onCommand("fault")} disabled={!selected}>
+        <button
+          type="button"
+          className={`${styles.action} ${styles.actionFault} ${flash === "fault" ? styles.actionFired : ""}`}
+          onPointerDown={(event) => {
+            event.preventDefault();
+            pointerGuardRef.current = Date.now();
+            fire("fault");
+          }}
+          onClick={() => {
+            if (Date.now() - pointerGuardRef.current < 600) {
+              pointerGuardRef.current = 0;
+              return;
+            }
+            fire("fault");
+          }}
+          disabled={!selected}
+        >
           ERRO <em>Enter</em>
         </button>
       </div>
@@ -199,8 +276,12 @@ export default function AdminPanel() {
     [isOnline, states],
   );
 
-  // With a single game running it takes over the Air Mouse keys by itself.
-  const selected = running.length === 1 ? running[0] : chosen;
+  // A single running game takes over the Air Mouse keys, but only while the
+  // operator has not picked a live screen themselves. A selection that flips
+  // under the cursor disables the button they are aiming at, which reads as
+  // "the first click does nothing".
+  const chosenIsLive = isOnline(chosen) && states[chosen]?.started === true;
+  const selected = chosenIsLive ? chosen : running.length === 1 ? running[0] : chosen;
   const activeState = states[selected];
   const activeLabel = CONTROL_GAMES.find((item) => item.id === selected)?.label ?? "";
   const activeHeard = heard.filter((item) => item.game === selected);

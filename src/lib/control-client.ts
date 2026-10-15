@@ -11,14 +11,57 @@ import type {
 const ENDPOINT = "/api/control/message";
 const STREAM = "/api/control/stream";
 
-function post(payload: Record<string, unknown>) {
+// While someone is talking the recogniser emits interim results several times
+// per second and the round ticks its clock every second. Publishing all of that
+// verbatim saturates the browser's per-origin connection pool, so the
+// operator's command ends up queued behind the flood. Coalescing the mirrors
+// keeps the panel live without starving `/api/control/message`.
+const HEARD_INTERVAL_MS = 400;
+const STATE_INTERVAL_MS = 250;
+
+function post(payload: Record<string, unknown>, keepalive = false) {
   // Fire and forget: the panel must never break a game because of telemetry.
   void fetch(ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
-    keepalive: true,
+    // `keepalive` is only worth its 64 KB budget on the way out of a page.
+    ...(keepalive ? { keepalive: true } : {}),
   }).catch(() => undefined);
+}
+
+// Leading-edge throttle with a trailing flush: the first message goes out
+// immediately, everything else inside the window replaces the pending one.
+function createThrottle(intervalMs: number) {
+  let last = 0;
+  let timer: number | null = null;
+  let pending: Record<string, unknown> | null = null;
+
+  const flush = () => {
+    timer = null;
+    const payload = pending;
+    if (!payload) return;
+    pending = null;
+    last = Date.now();
+    post(payload);
+  };
+
+  return (payload: Record<string, unknown>) => {
+    if (typeof window === "undefined") return;
+    const elapsed = Date.now() - last;
+    if (elapsed >= intervalMs) {
+      if (timer !== null) {
+        window.clearTimeout(timer);
+        timer = null;
+      }
+      pending = null;
+      last = Date.now();
+      post(payload);
+      return;
+    }
+    pending = payload;
+    if (timer === null) timer = window.setTimeout(flush, intervalMs - elapsed);
+  };
 }
 
 export type GameChannel = {
@@ -34,6 +77,8 @@ export function openGameChannel(options: { game: ControlGameId; onCommand: (acti
   const { game, onCommand } = options;
   let source: EventSource | null = null;
   let closed = false;
+  const throttleState = createThrottle(STATE_INTERVAL_MS);
+  const throttleHeard = createThrottle(HEARD_INTERVAL_MS);
 
   const handleCommand = (event: MessageEvent<string>) => {
     const parsed = safeParse<ControlEvent>(event.data);
@@ -60,11 +105,15 @@ export function openGameChannel(options: { game: ControlGameId; onCommand: (acti
   return {
     publishState(state) {
       if (closed) return;
-      post({ role: "game", kind: "state", game, state });
+      throttleState({ role: "game", kind: "state", game, state });
     },
     publishHeard(heard) {
       if (closed) return;
-      post({ role: "game", kind: "heard", game, ...heard });
+      const payload = { role: "game", kind: "heard", game, ...heard };
+      // What the team actually said is worth an immediate round trip; the
+      // running commentary is not.
+      if (heard.final) post(payload);
+      else throttleHeard(payload);
     },
     publishNote(text) {
       if (closed) return;
@@ -75,7 +124,7 @@ export function openGameChannel(options: { game: ControlGameId; onCommand: (acti
       closed = true;
       source?.close();
       source = null;
-      post({ role: "game", kind: "bye", game });
+      post({ role: "game", kind: "bye", game }, true);
     },
   };
 }
