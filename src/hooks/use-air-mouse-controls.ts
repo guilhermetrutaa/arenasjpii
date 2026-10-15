@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 type AirMouseOptions = {
   onCorrect?: () => void;
   onSkip?: () => void;
+  onFault?: () => void;
   onHome?: () => void;
   onChooseForbidden?: () => void;
   onChooseEmoji?: () => void;
@@ -29,10 +30,11 @@ export function useAirMouseControls(options: AirMouseOptions) {
       const key = event.key.toLowerCase();
       const isCorrect = code === "PageUp" || key === "pageup" || event.keyCode === 33;
       const isSkip = code === "PageDown" || key === "pagedown" || event.keyCode === 34;
+      const isFault = code === "Enter" || code === "NumpadEnter" || key === "enter" || event.keyCode === 13;
       const isHome = code === "AudioVolumeMute" || code === "Mute" || key === "audiovolumemute" || key === "mute" || event.keyCode === 173;
       const isChooseForbidden = code === "ArrowUp" || key === "arrowup";
       const isChooseEmoji = code === "ArrowDown" || key === "arrowdown";
-      const action = isCorrect ? callbacks.current.onCorrect : isSkip ? callbacks.current.onSkip : isHome ? callbacks.current.onHome : isChooseForbidden ? callbacks.current.onChooseForbidden : isChooseEmoji ? callbacks.current.onChooseEmoji : undefined;
+      const action = isCorrect ? callbacks.current.onCorrect : isSkip ? callbacks.current.onSkip : isFault ? callbacks.current.onFault : isHome ? callbacks.current.onHome : isChooseForbidden ? callbacks.current.onChooseForbidden : isChooseEmoji ? callbacks.current.onChooseEmoji : undefined;
       if (!action) return;
       event.preventDefault();
       action();

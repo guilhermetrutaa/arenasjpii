@@ -6,11 +6,12 @@ import localFont from "next/font/local";
 import { EMOJI_GAME_ROUNDS, EMOJI_ROUND_SECONDS, emojiSaints, type EmojiSaint } from "@/src/data/emoji-dos-santos";
 import { classifySaintAttempt, isRelevantTranscription, type SaintAttempt } from "@/src/lib/detection";
 import { startContinuousSpeechRecognition } from "@/src/lib/speech-recognition";
+import { openGameChannel, type GameChannel } from "@/src/lib/control-client";
 import { useAirMouseControls } from "@/src/hooks/use-air-mouse-controls";
 import styles from "@/app/game-runtime.module.css";
 import feedbackStyles from "./emoji-feedback.module.css";
 
-type Outcome = "hit" | "skip";
+type Outcome = "hit" | "skip" | "fault";
 type Feedback = Exclude<SaintAttempt, "hit">;
 type SpeechControl = ReturnType<typeof startContinuousSpeechRecognition>;
 
@@ -58,6 +59,9 @@ export default function EmojiGame() {
   const initializedRef = useRef(false);
   const feedbackRef = useRef<Feedback | null>(null);
   const feedbackTimerRef = useRef<number | null>(null);
+  const channelRef = useRef<GameChannel | null>(null);
+  const startedAtRef = useRef(0);
+  const [faultFlash, setFaultFlash] = useState(false);
 
   const current = saints[index];
 
@@ -100,7 +104,7 @@ export default function EmojiGame() {
       score,
       hits: score,
       skips: historyRef.current.filter((item) => item.outcome === "skip").length,
-      faults: 0,
+      faults: historyRef.current.filter((item) => item.outcome === "fault").length,
       total: Math.max(historyRef.current.length, 1),
     };
     window.sessionStorage.setItem("arena:last-result", JSON.stringify(result));
@@ -135,6 +139,7 @@ export default function EmojiGame() {
 
   const begin = () => {
     clearFeedback();
+    startedAtRef.current = Date.now();
     setSaints(shuffle(emojiSaints).slice(0, EMOJI_GAME_ROUNDS));
     setIndex(0);
     setSeconds(EMOJI_ROUND_SECONDS);
@@ -146,8 +151,27 @@ export default function EmojiGame() {
     setStarted(true);
   };
 
+  // An error does not advance the round: the operator decides whether to let
+  // the team try again or to skip it from the panel.
+  const fault = () => {
+    if (!started || finished || !current) return;
+    const nextHistory = [...historyRef.current, { outcome: "fault" as Outcome }];
+    historyRef.current = nextHistory;
+    setHistory(nextHistory);
+    setMessage("Errou!");
+    setFaultFlash(true);
+    window.setTimeout(() => setFaultFlash(false), 420);
+    const audio = new Audio("/som-error.mp3");
+    audio.volume = 0.7;
+    void audio.play().catch(() => undefined);
+  };
+
   const advance = (outcome: Outcome, timeout = false) => {
     if (!started || finished || !current) return;
+    if (outcome === "fault") {
+      fault();
+      return;
+    }
     clearFeedback();
     const nextHistory = [...historyRef.current, { outcome }];
     historyRef.current = nextHistory;
@@ -185,12 +209,14 @@ export default function EmojiGame() {
         if (!saint || finishedRef.current) return;
         if (!isFinal) {
           if (SHOW_DEBUG) setHeard({ final: false, text: transcription, verdict: "ouvindo..." });
+          channelRef.current?.publishHeard({ text: transcription, final: false, verdict: "ouvindo..." });
           return;
         }
         if (!isRelevantTranscription(transcription)) return;
         const attempt = classifySaintAttempt(transcription, saint.name, saint.acceptedNames);
         console.log(`[emoji] "${transcription}" -> ${attempt} (esperado: ${saint.name})`);
         if (SHOW_DEBUG) setHeard({ final: true, text: transcription, verdict: attempt });
+        channelRef.current?.publishHeard({ text: transcription, final: true, verdict: attempt });
         if (attempt === "hit") {
           clearFeedback();
           advanceRef.current("hit");
@@ -221,7 +247,45 @@ export default function EmojiGame() {
   useAirMouseControls({
     onCorrect: () => advance("hit"),
     onSkip: () => advance("skip"),
+    onFault: () => advance("fault"),
   });
+
+  // Admin panel bridge: mirrors the round, the hidden answer and the
+  // microphone transcript in real time and accepts commands from `/admin`.
+  useEffect(() => {
+    const channel = openGameChannel({
+      game: "emoji-dos-santos",
+      onCommand: (action) => advanceRef.current(action),
+    });
+    channelRef.current = channel;
+    channel.publishNote("Tela de Emoji dos Santos conectada ao painel");
+    return () => {
+      channelRef.current = null;
+      channel.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    const hits = historyRef.current.filter((item) => item.outcome === "hit").length;
+    const skips = historyRef.current.filter((item) => item.outcome === "skip").length;
+    const faults = historyRef.current.filter((item) => item.outcome === "fault").length;
+    channelRef.current?.publishState({
+      started,
+      finished,
+      startedAt: startedAtRef.current,
+      score,
+      hits,
+      skips,
+      faults,
+      seconds,
+      round: saints.length === 0 ? 0 : index + 1,
+      rounds: saints.length,
+      speechMessage: message || speechMessage,
+      promptLabel: "Emojis",
+      promptItems: current?.emojis ?? [],
+      answer: current?.name ?? null,
+    });
+  }, [current, finished, index, message, saints.length, score, seconds, speechMessage, started]);
 
   if (!started) {
     return (
@@ -242,7 +306,7 @@ export default function EmojiGame() {
         <section className={`${styles.stat} ${styles.score}`}><h2>ACERTOS</h2><p>{score}</p></section>
         <section className={`${styles.stat} ${styles.time}`}><h2>TEMPO</h2><p>{String(seconds).padStart(2, "0")}</p></section>
       </div>
-      <p className={styles.speechStatus} aria-live="polite">{message || speechMessage}</p>
+      <p className={`${styles.speechStatus} ${faultFlash ? styles.fault : ""}`} aria-live="polite">{message || speechMessage}</p>
       {feedback && (
         <p
           className={`${feedbackStyles.speechFeedback} ${spudCrisp.className} ${feedback === "wrong" ? feedbackStyles.speechFeedbackWrong : feedbackStyles.speechFeedbackPartial}`}

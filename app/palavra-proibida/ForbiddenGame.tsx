@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { DATA, type ForbiddenCard } from "@/src/data/forbidden-cards";
 import { detectForbiddenWords } from "@/src/lib/detection";
 import { startContinuousSpeechRecognition } from "@/src/lib/speech-recognition";
+import { openGameChannel, type GameChannel } from "@/src/lib/control-client";
 import { useAirMouseControls } from "@/src/hooks/use-air-mouse-controls";
 import styles from "@/app/game-runtime.module.css";
 
@@ -38,6 +39,8 @@ export default function ForbiddenGame() {
   const startedRef = useRef(false);
   const advanceRef = useRef<(outcome: Outcome) => void>(() => undefined);
   const initializedRef = useRef(false);
+  const channelRef = useRef<GameChannel | null>(null);
+  const startedAtRef = useRef(0);
 
   const current = deck[cardIndex];
 
@@ -91,6 +94,7 @@ export default function ForbiddenGame() {
   const begin = () => {
     const nextDeck = shuffle(DATA);
     startedRef.current = true;
+    startedAtRef.current = Date.now();
     setDeck(nextDeck);
     setCardIndex(0);
     setSeconds(90);
@@ -126,11 +130,19 @@ export default function ForbiddenGame() {
     speechRef.current?.stop();
     const control = startContinuousSpeechRecognition(
       ({ alternatives, isFinal }) => {
-        if (!isFinal) return;
         const transcription = alternatives[0] ?? "";
         const card = cardRef.current;
         if (!card) return;
+        if (!isFinal) {
+          channelRef.current?.publishHeard({ text: transcription, final: false, verdict: "ouvindo..." });
+          return;
+        }
         const detection = detectForbiddenWords(transcription, card.forbidden);
+        channelRef.current?.publishHeard({
+          text: transcription,
+          final: true,
+          verdict: detection.falouProibida ? "proibida" : "ok",
+        });
         if (detection.falouProibida) advanceRef.current("fault");
       },
       {
@@ -155,9 +167,47 @@ export default function ForbiddenGame() {
     };
   }, []);
 
+  // Admin panel bridge: mirrors the round state and the microphone transcript
+  // in real time and accepts acerto/pular/erro commands from `/admin`.
+  useEffect(() => {
+    const channel = openGameChannel({
+      game: "palavra-proibida",
+      onCommand: (action) => advanceRef.current(action),
+    });
+    channelRef.current = channel;
+    channel.publishNote("Tela de Palavra Proibida conectada ao painel");
+    return () => {
+      channelRef.current = null;
+      channel.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    const hits = historyRef.current.filter((item) => item.outcome === "hit").length;
+    const skips = historyRef.current.filter((item) => item.outcome === "skip").length;
+    const faults = historyRef.current.filter((item) => item.outcome === "fault").length;
+    channelRef.current?.publishState({
+      started,
+      finished,
+      startedAt: startedAtRef.current,
+      score,
+      hits,
+      skips,
+      faults,
+      seconds,
+      round: deck.length === 0 ? 0 : cardIndex + 1,
+      rounds: deck.length,
+      speechMessage,
+      promptLabel: current?.saint ?? "Palavra Proibida",
+      promptItems: current?.forbidden ?? [],
+      answer: null,
+    });
+  }, [cardIndex, current, deck.length, finished, score, seconds, speechMessage, started]);
+
   useAirMouseControls({
     onCorrect: () => advance("hit"),
     onSkip: () => advance("skip"),
+    onFault: () => advance("fault"),
   });
 
   if (!started) {
