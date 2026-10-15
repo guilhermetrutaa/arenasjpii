@@ -1,0 +1,27 @@
+/* Emoji dos Santos speech announcement. Kept out of game-runtime.module.css so
+   the Spud typeface is only fetched on this route. */
+.speechFeedback {
+  width: min(100%, 811px);
+  margin: 10px 0 0;
+  font-size: clamp(26px, 3.4vw, 46px);
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.speechFeedbackWrong { color: #a12d2d; }
+.speechFeedbackPartial { color: #b07d12; }
+
+.debug {
+  width: min(100%, 811px);
+  margin: 12px 0 0;
+  padding: 8px 12px;
+  border: 1px dashed #14345d;
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.75);
+  color: #14345d;
+  font: 500 13px/1.4 ui-monospace, monospace;
+  text-align: center;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

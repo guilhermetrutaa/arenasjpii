@@ -40,6 +40,23 @@ folder remains reference-only and must not be modified.
   shows its target word, the five forbidden words, and the Arena branding.
 - The layout must remain legible without printed background graphics.
 
+## Emoji dos Santos speech feedback
+
+- While a round is running, every finalized speech utterance that does not
+  score a hit shows a transient phrase at the bottom of the screen.
+- `Errado` is shown when the utterance does not reach half of the displayed
+  saint's name.
+- `Quase` is shown when the utterance contains at least half of the name's
+  content words, in order, without completing a scoreable name.
+- Feedback is evaluated only on finalized utterances, never on interim
+  transcripts, and clears 1.2 seconds after the last finalized utterance.
+- The phrase is rendered centered in the flow directly below the speech status
+  line, in the local `public/fonts/Spud AF Crisp W00 Regular.ttf` typeface with
+  no background or entrance animation. This is a deliberate departure from the
+  Syne game typography recorded in `arena-games.md`.
+- Feedback is display-only: it never scores, faults, or skips a round. Only a
+  confirmed hit advances the round.
+
 ## Air Mouse and headset controls
 
 - The on-screen action buttons are removed from both games.

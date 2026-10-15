@@ -112,6 +112,55 @@ export function detectSaint(
   return { santoDetectado: null, confidence: 0 };
 }
 
+export type SaintAttempt = "hit" | "partial" | "wrong";
+
+/*
+ * Longest order-preserving run of content words the player actually managed to
+ * say. Order matters ("na ordem") but the words may be interleaved with noise
+ * or filler, and near-miss ASR spellings count through wordsMatch.
+ */
+function longestOrderedMatch(spoken: string[], target: string[]): number {
+  let best = 0;
+  let previous = new Array<number>(target.length + 1).fill(0);
+  for (let i = 1; i <= spoken.length; i += 1) {
+    const current = new Array<number>(target.length + 1).fill(0);
+    for (let j = 1; j <= target.length; j += 1) {
+      current[j] = wordsMatch(spoken[i - 1], target[j - 1])
+        ? previous[j - 1] + 1
+        : Math.max(previous[j], current[j - 1]);
+      if (current[j] > best) best = current[j];
+    }
+    previous = current;
+  }
+  return best;
+}
+
+/*
+ * Grades a single spoken attempt against the displayed saint so the game can
+ * tell the player whether they were close. `hit` keeps the strict full-name
+ * rule of detectSaint, `partial` means at least half of the displayed name's
+ * content words were said in order, and `wrong` is everything else.
+ *
+ * Only the displayed name is graded, not the accepted aliases: the player is
+ * answering what is on the screen, and aliases exist solely to absorb ASR
+ * mishearings of a complete name. Grading aliases too would report "partial"
+ * from a single spoken word.
+ */
+export function classifySaintAttempt(
+  transcription: string,
+  saintName: string,
+  acceptedNames: string[] = [],
+): SaintAttempt {
+  if (detectSaint(transcription, saintName, acceptedNames).santoDetectado) return "hit";
+
+  const spoken = meaningfulTokens(transcription);
+  const target = meaningfulTokens(saintName);
+  if (spoken.length === 0 || target.length < 2) return "wrong";
+
+  // "pela metade": at least half of the name was said.
+  return longestOrderedMatch(spoken, target) * 2 >= target.length ? "partial" : "wrong";
+}
+
 function emptyResult(): DetectionResult {
   return { falouProibida: false, palavraDetectada: null, santoDetectado: null, confidence: 0 };
 }

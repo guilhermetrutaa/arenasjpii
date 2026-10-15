@@ -2,14 +2,31 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import localFont from "next/font/local";
 import { EMOJI_GAME_ROUNDS, EMOJI_ROUND_SECONDS, emojiSaints, type EmojiSaint } from "@/src/data/emoji-dos-santos";
-import { detectSaint } from "@/src/lib/detection";
+import { classifySaintAttempt, isRelevantTranscription, type SaintAttempt } from "@/src/lib/detection";
 import { startContinuousSpeechRecognition } from "@/src/lib/speech-recognition";
 import { useAirMouseControls } from "@/src/hooks/use-air-mouse-controls";
 import styles from "@/app/game-runtime.module.css";
+import feedbackStyles from "./emoji-feedback.module.css";
 
 type Outcome = "hit" | "skip";
+type Feedback = Exclude<SaintAttempt, "hit">;
 type SpeechControl = ReturnType<typeof startContinuousSpeechRecognition>;
+
+const FEEDBACK_MS = 1200;
+const FEEDBACK_LABEL: Record<Feedback, string> = { wrong: "Errado", partial: "Quase" };
+
+// Temporary: shows on localhost what AssemblyAI heard and how it was graded.
+const SHOW_DEBUG = process.env.NODE_ENV !== "production";
+
+// Scoped to this route on purpose: the file is 516 KB and the announcement is
+// the only thing that uses it.
+const spudCrisp = localFont({
+  src: "../../public/fonts/Spud AF Crisp W00 Regular.ttf",
+  display: "swap",
+  weight: "400",
+});
 
 function shuffle<T>(values: T[]): T[] {
   const copy = [...values];
@@ -31,14 +48,44 @@ export default function EmojiGame() {
   const [finished, setFinished] = useState(false);
   const [speechMessage, setSpeechMessage] = useState("Microfone desativado");
   const [message, setMessage] = useState("");
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const [heard, setHeard] = useState<{ final: boolean; text: string; verdict: string } | null>(null);
   const speechRef = useRef<SpeechControl>(null);
   const saintRef = useRef<EmojiSaint | null>(null);
   const historyRef = useRef(history);
   const finishedRef = useRef(false);
   const advanceRef = useRef<(outcome: Outcome, timeout?: boolean) => void>(() => undefined);
   const initializedRef = useRef(false);
+  const feedbackRef = useRef<Feedback | null>(null);
+  const feedbackTimerRef = useRef<number | null>(null);
 
   const current = saints[index];
+
+  // The announcement restarts on every finalized utterance so it always
+  // expires 1.2s after the last thing the player actually said.
+  const showFeedback = useCallback((value: Feedback) => {
+    if (feedbackRef.current !== value) {
+      feedbackRef.current = value;
+      setFeedback(value);
+    }
+    if (feedbackTimerRef.current !== null) window.clearTimeout(feedbackTimerRef.current);
+    feedbackTimerRef.current = window.setTimeout(() => {
+      feedbackTimerRef.current = null;
+      feedbackRef.current = null;
+      setFeedback(null);
+    }, FEEDBACK_MS);
+  }, []);
+
+  const clearFeedback = useCallback(() => {
+    if (feedbackTimerRef.current !== null) {
+      window.clearTimeout(feedbackTimerRef.current);
+      feedbackTimerRef.current = null;
+    }
+    if (feedbackRef.current !== null) {
+      feedbackRef.current = null;
+      setFeedback(null);
+    }
+  }, []);
 
   useEffect(() => { saintRef.current = current ?? null; }, [current]);
   useEffect(() => { historyRef.current = history; }, [history]);
@@ -81,9 +128,13 @@ export default function EmojiGame() {
     return () => window.clearInterval(timer);
   }, [finished, started]);
 
-  useEffect(() => () => speechRef.current?.stop(), []);
+  useEffect(() => () => {
+    speechRef.current?.stop();
+    if (feedbackTimerRef.current !== null) window.clearTimeout(feedbackTimerRef.current);
+  }, []);
 
   const begin = () => {
+    clearFeedback();
     setSaints(shuffle(emojiSaints).slice(0, EMOJI_GAME_ROUNDS));
     setIndex(0);
     setSeconds(EMOJI_ROUND_SECONDS);
@@ -97,6 +148,7 @@ export default function EmojiGame() {
 
   const advance = (outcome: Outcome, timeout = false) => {
     if (!started || finished || !current) return;
+    clearFeedback();
     const nextHistory = [...historyRef.current, { outcome }];
     historyRef.current = nextHistory;
     setHistory(nextHistory);
@@ -128,11 +180,23 @@ export default function EmojiGame() {
     speechRef.current?.stop();
     const control = startContinuousSpeechRecognition(
       ({ alternatives, isFinal }) => {
-        if (!isFinal) return;
+        const transcription = alternatives[0] ?? "";
         const saint = saintRef.current;
-        if (!saint) return;
-        const detection = detectSaint(alternatives[0] ?? "", saint.name, saint.acceptedNames);
-        if (detection.santoDetectado) advanceRef.current("hit");
+        if (!saint || finishedRef.current) return;
+        if (!isFinal) {
+          if (SHOW_DEBUG) setHeard({ final: false, text: transcription, verdict: "ouvindo..." });
+          return;
+        }
+        if (!isRelevantTranscription(transcription)) return;
+        const attempt = classifySaintAttempt(transcription, saint.name, saint.acceptedNames);
+        console.log(`[emoji] "${transcription}" -> ${attempt} (esperado: ${saint.name})`);
+        if (SHOW_DEBUG) setHeard({ final: true, text: transcription, verdict: attempt });
+        if (attempt === "hit") {
+          clearFeedback();
+          advanceRef.current("hit");
+          return;
+        }
+        showFeedback(attempt);
       },
       {
         shouldStayAlive: () => !finishedRef.current,
@@ -179,6 +243,19 @@ export default function EmojiGame() {
         <section className={`${styles.stat} ${styles.time}`}><h2>TEMPO</h2><p>{String(seconds).padStart(2, "0")}</p></section>
       </div>
       <p className={styles.speechStatus} aria-live="polite">{message || speechMessage}</p>
+      {feedback && (
+        <p
+          className={`${feedbackStyles.speechFeedback} ${spudCrisp.className} ${feedback === "wrong" ? feedbackStyles.speechFeedbackWrong : feedbackStyles.speechFeedbackPartial}`}
+          aria-live="assertive"
+        >
+          {FEEDBACK_LABEL[feedback]}
+        </p>
+      )}
+      {SHOW_DEBUG && (
+        <pre className={feedbackStyles.debug}>
+          {heard ? `${heard.final ? "FINAL" : "parcial"} | ${heard.verdict} | "${heard.text}"` : "aguardando microfone..."}
+        </pre>
+      )}
     </section></main>
   );
 }
