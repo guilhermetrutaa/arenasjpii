@@ -19,6 +19,7 @@ const ACTION_LABEL: Record<ControlCommandAction, string> = {
   hit: "acerto",
   skip: "pular",
   fault: "erro",
+  resetDeck: "reiniciar baralho",
 };
 
 function formatClock(at: number) {
@@ -91,6 +92,40 @@ function GameCard({ game, label, short, state, heard, online, selected, onSelect
     [onCommand],
   );
 
+  // Resetting the deck mid-round would otherwise need two presses in a hurry,
+  // so the first press only arms the button.
+  const [resetArmed, setResetArmed] = useState(false);
+  const resetTimerRef = useRef<number | null>(null);
+  const resetGuardRef = useRef(0);
+
+  useEffect(
+    () => () => {
+      if (resetTimerRef.current !== null) window.clearTimeout(resetTimerRef.current);
+    },
+    [],
+  );
+
+  const resetDeck = () => {
+    if (!resetArmed) {
+      setResetArmed(true);
+      resetTimerRef.current = window.setTimeout(() => {
+        resetTimerRef.current = null;
+        setResetArmed(false);
+      }, 4000);
+      return;
+    }
+    if (resetTimerRef.current !== null) window.clearTimeout(resetTimerRef.current);
+    resetTimerRef.current = null;
+    setResetArmed(false);
+    onCommand("resetDeck");
+  };
+
+  const resetPress = () => {
+    if (Date.now() - resetGuardRef.current < 600) return;
+    resetGuardRef.current = Date.now();
+    resetDeck();
+  };
+
   return (
     <section className={`${styles.card} ${selected ? styles.cardActive : ""}`} data-game={game}>
       <header className={styles.cardHeader}>
@@ -138,6 +173,36 @@ function GameCard({ game, label, short, state, heard, online, selected, onSelect
       <p className={styles.roundInfo}>
         {state?.rounds ? `Rodada ${state.round} de ${state.rounds}` : "Sem rodadas"} · {state?.speechMessage || "sem status de microfone"}
       </p>
+
+      {game === "palavra-proibida" && (
+        <div className={styles.deckBox}>
+          <div>
+            <h3>Baralho sem repetição</h3>
+            <p className={styles.deckInfo}>
+              {state && state.rounds > 0 ? (
+                <>
+                  <strong>{state.rounds}</strong> de {state.deckTotal} cartas ainda não usadas
+                </>
+              ) : (
+                "aguardando o início da rodada"
+              )}
+            </p>
+          </div>
+          <button
+            type="button"
+            className={`${styles.deckReset} ${resetArmed ? styles.deckResetArmed : ""}`}
+            onPointerDown={(event) => {
+              event.preventDefault();
+              resetPress();
+            }}
+            onClick={resetPress}
+            disabled={!online}
+            title={online ? "Deixa o baralho inteiro disponível de novo" : "Abra /palavra-proibida para poder reiniciar"}
+          >
+            {resetArmed ? "CONFIRMAR?" : "REINICIAR BARALHO"}
+          </button>
+        </div>
+      )}
 
       <div className={styles.actions}>
         <button

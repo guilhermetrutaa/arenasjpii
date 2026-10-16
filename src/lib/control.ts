@@ -4,7 +4,9 @@
 
 export type ControlGameId = "palavra-proibida" | "emoji-dos-santos";
 
-export type ControlCommandAction = "hit" | "skip" | "fault";
+// `resetDeck` is an operator command rather than a round outcome: it makes the
+// whole deck available again after an interrupted round.
+export type ControlCommandAction = "hit" | "skip" | "fault" | "resetDeck";
 
 export const CONTROL_GAMES: Array<{ id: ControlGameId; label: string; short: string }> = [
   { id: "palavra-proibida", label: "Palavra Proibida", short: "PP" },
@@ -25,6 +27,9 @@ export type ControlState = {
   seconds: number;
   round: number;
   rounds: number;
+  // "Palavra Proibida": size of the whole deck. The operator reads it next to
+  // `rounds`, which now counts only the cards a player has not faced yet.
+  deckTotal: number;
   speechMessage: string;
   // "Palavra Proibida": the saint name. "Emoji dos Santos": "Emojis".
   promptLabel: string;

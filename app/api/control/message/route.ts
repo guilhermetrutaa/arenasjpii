@@ -3,7 +3,7 @@ import { CONTROL_GAMES, CONTROL_STALE_MS, type ControlCommandAction, type Contro
 import { addNote, recordCommand, recordGameHeard, recordGameOffline, recordGameState } from "@/src/lib/control-hub";
 
 const GAME_IDS = new Set<string>(CONTROL_GAMES.map((game) => game.id));
-const ACTIONS = new Set<string>(["hit", "skip", "fault"]);
+const ACTIONS = new Set<string>(["hit", "skip", "fault", "resetDeck"]);
 
 function isGameId(value: unknown): value is ControlGameId {
   return typeof value === "string" && GAME_IDS.has(value);
@@ -92,6 +92,7 @@ export async function POST(request: Request) {
       seconds: readCount(source.seconds),
       round: readCount(source.round),
       rounds: readCount(source.rounds),
+      deckTotal: readCount(source.deckTotal),
       speechMessage: readString(source.speechMessage, 120),
       promptLabel: readString(source.promptLabel, 120),
       promptItems: readStringList(source.promptItems),

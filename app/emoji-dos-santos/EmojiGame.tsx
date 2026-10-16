@@ -255,7 +255,12 @@ export default function EmojiGame() {
   useEffect(() => {
     const channel = openGameChannel({
       game: "emoji-dos-santos",
-      onCommand: (action) => advanceRef.current(action),
+      onCommand: (action) => {
+        // `resetDeck` exists for the Palavra Proibida deck and has no meaning
+        // for the eight-round emoji deck.
+        if (action === "resetDeck") return;
+        advanceRef.current(action);
+      },
     });
     channelRef.current = channel;
     channel.publishNote("Tela de Emoji dos Santos conectada ao painel");
@@ -280,6 +285,7 @@ export default function EmojiGame() {
       seconds,
       round: saints.length === 0 ? 0 : index + 1,
       rounds: saints.length,
+      deckTotal: saints.length,
       speechMessage: message || speechMessage,
       promptLabel: "Emojis",
       promptItems: current?.emojis ?? [],

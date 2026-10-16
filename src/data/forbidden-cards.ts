@@ -293,6 +293,66 @@ export const DATA: ForbiddenCard[] = [
     "acceptedNames": ["Santa Madre Teresa", "Madre Teresa", "Madri Teresa", "Madre Tereta"]
   },
   {
+    "saint": "Santo Inácio de Loyola",
+    "forbidden": ["jesuítas", "exercícios", "militar", "companhia", "espiritual"],
+    "category": "saint",
+    "acceptedNames": ["Santo Inácio de Loyola", "Santo Inácio", "Inácio de Loyola", "Inacio"]
+  },
+  {
+    "saint": "São Tomás de Aquino",
+    "forbidden": ["teologia", "doutor", "boi", "suma", "filosofia"],
+    "category": "saint",
+    "acceptedNames": ["São Tomás de Aquino", "Tomás de Aquino", "São Tomás", "Tomas de Aquino"]
+  },
+  {
+    "saint": "São Vicente de Paulo",
+    "forbidden": ["caridade", "pobres", "vicentinos", "freiras", "asilo"],
+    "category": "saint",
+    "acceptedNames": ["São Vicente de Paulo", "São Vicente", "Vicente de Paulo", "Sao Vicente"]
+  },
+  {
+    "saint": "Santa Catarina de Sena",
+    "forbidden": ["itália", "doutora", "estigmas", "papa", "cartas"],
+    "category": "saint",
+    "acceptedNames": ["Santa Catarina de Sena", "Santa Catarina", "Catarina de Sena"]
+  },
+  {
+    "saint": "Nossa Senhora de Guadalupe",
+    "forbidden": ["méxico", "índio", "tilma", "rosas", "manto"],
+    "category": "saint",
+    "acceptedNames": ["Nossa Senhora de Guadalupe", "Guadalupe"]
+  },
+  {
+    "saint": "Nossa Senhora do Perpétuo Socorro",
+    "forbidden": ["ícone", "bizantino", "novena", "socorro", "mãe"],
+    "category": "saint",
+    "acceptedNames": ["Nossa Senhora do Perpétuo Socorro", "Perpétuo Socorro", "Perpetuo Socorro"]
+  },
+  {
+    "saint": "Beato Carlo Acutis",
+    "forbidden": ["jovem", "internet", "eucaristia", "computador", "leucemia"],
+    "category": "saint",
+    "acceptedNames": ["Beato Carlo Acutis", "Carlo Acutis", "Carlo", "Carlos Acutis"]
+  },
+  {
+    "saint": "São João Evangelista",
+    "forbidden": ["amado", "cruz", "apocalipse", "águia", "maria"],
+    "category": "saint",
+    "acceptedNames": ["São João Evangelista", "João Evangelista", "Apóstolo João"]
+  },
+  {
+    "saint": "Santa Faustina",
+    "forbidden": ["misericórdia", "diário", "raios", "polônia", "jesus"],
+    "category": "saint",
+    "acceptedNames": ["Santa Faustina", "Irmã Faustina", "Faustina"]
+  },
+  {
+    "saint": "Santa Maria Madalena",
+    "forbidden": ["pecadora", "perfume", "pés", "ressurreição", "túmulo"],
+    "category": "saint",
+    "acceptedNames": ["Santa Maria Madalena", "Maria Madalena", "Madalena"]
+  },
+  {
     "saint": "Anjo da Guarda",
     "forbidden": ["espírito", "celeste", "protetor", "paraiso", "crianças"],
     "category": "saint",
@@ -404,6 +464,72 @@ export const DATA: ForbiddenCard[] = [
     "category": "priest",
     "acceptedNames": ["Dom Dulcênio", "Dom Dulcenio", "Dom Dulcinio", "Dom Dulcênio Fontes", "Bispo Dulcênio"]
   },
+  {
+    "saint": "Papa Francisco",
+    "forbidden": ["jesuíta", "argentino", "vaticano", "roma", "pontífice"],
+    "category": "priest",
+    "acceptedNames": ["Papa Francisco", "Francisco", "Papa", "Jorge Bergoglio"]
+  },
+  {
+    "saint": "Papa São João Paulo II",
+    "forbidden": ["polônia", "jovens", "vaticano", "atentado", "pontífice"],
+    "category": "priest",
+    "acceptedNames": ["Papa João Paulo II", "João Paulo Segundo", "Karol Wojtyla"]
+  },
+  {
+    "saint": "Papa Bento XVI",
+    "forbidden": ["renúncia", "alemão", "ratzinger", "teólogo", "emérito"],
+    "category": "priest",
+    "acceptedNames": ["Papa Bento XVI", "Bento XVI", "Bento Dezesseis", "Joseph Ratzinger"]
+  },
+  {
+    "saint": "Frei Gilson",
+    "forbidden": ["carmelo", "música", "rosário", "madrugada", "pregação"],
+    "category": "priest",
+    "acceptedNames": ["Frei Gilson", "Gilson", "Frei Gilso"]
+  },
+  {
+    "saint": "Padre Antônio Maria",
+    "forbidden": ["cantor", "romaria", "terço", "música", "órfãos"],
+    "category": "priest",
+    "acceptedNames": ["Padre Antônio Maria", "Padre Antonio Maria", "Antonio Maria"]
+  },
+  {
+    "saint": "Irmã Dulce (Santa Dulce dos Pobres)",
+    "forbidden": ["bahia", "anjo", "hospital", "obras", "freira"],
+    "category": "priest",
+    "acceptedNames": ["Irmã Dulce", "Santa Dulce", "Dulce dos Pobres", "Irma Dulce"]
+  },
+  {
+    "saint": "Padre Júlio Lancellotti",
+    "forbidden": ["rua", "moradores", "marreta", "pedras", "pobres"],
+    "category": "priest",
+    "acceptedNames": ["Padre Júlio Lancellotti", "Padre Julio", "Padre Julio Lanceloti"]
+  },
+  {
+    "saint": "Padre Paulo Ricardo",
+    "forbidden": ["internet", "cuiabá", "conservador", "teologia", "aulas"],
+    "category": "priest",
+    "acceptedNames": ["Padre Paulo Ricardo", "Paulo Ricardo"]
+  },
+  {
+    "saint": "Padre Vítor Coelho de Almeida",
+    "forbidden": ["aparecida", "rádio", "redentorista", "apóstolo", "santo"],
+    "category": "priest",
+    "acceptedNames": ["Padre Vítor Coelho", "Padre Vitor", "Vítor Coelho"]
+  },
+  {
+    "saint": "Dom Pedro Casaldáliga",
+    "forbidden": ["araguaia", "bispo", "índios", "poesia", "pobres"],
+    "category": "priest",
+    "acceptedNames": ["Dom Pedro Casaldáliga", "Pedro Casaldáliga", "Dom Pedro"]
+  },
+  {
+    "saint": "Padre Joãozinho",
+    "forbidden": ["música", "dehoniano", "teólogo", "cantor", "scj"],
+    "category": "priest",
+    "acceptedNames": ["Padre Joãozinho", "Joãozinho"]
+  },
 
   // ==========================================
   // CATEGORIA: OBJETOS LITÚRGICOS
@@ -456,6 +582,120 @@ export const DATA: ForbiddenCard[] = [
     "category": "object",
     "acceptedNames": ["Rosário", "Rosario", "Hozario", "Rojario"]
   },
+  {
+    "saint": "Turíbulo",
+    "forbidden": ["incenso", "fumaça", "balançar", "fogo", "missa"],
+    "category": "object",
+    "acceptedNames": ["Turíbulo", "Turibulo", "Toribulo"]
+  },
+  {
+    "saint": "Naveta",
+    "forbidden": ["barquinho", "incenso", "colher", "turíbulo", "grãos"],
+    "category": "object",
+    "acceptedNames": ["Naveta", "Navet", "Nave", "Vasinho de incenso"]
+  },
+  {
+    "saint": "Ambão",
+    "forbidden": ["leitura", "palavra", "púlpito", "lecionário", "estante"],
+    "category": "object",
+    "acceptedNames": ["Ambão", "Ambao", "Púlpito", "Pulpito"]
+  },
+  {
+    "saint": "Galhetas",
+    "forbidden": ["água", "vinho", "jarrinhas", "vidro", "sangue"],
+    "category": "object",
+    "acceptedNames": ["Galhetas", "Galheta", "Gaieta", "Jarrinhas", "Cruhetas"]
+  },
+  {
+    "saint": "Âmbula (Píxide)",
+    "forbidden": ["hóstias", "sacrário", "copo", "tampa", "comunhão"],
+    "category": "object",
+    "acceptedNames": ["Âmbula", "Ambula", "Píxide", "Pixide", "Cibório", "Ciborio"]
+  },
+  {
+    "saint": "Sino",
+    "forbidden": ["tocar", "barulho", "consagração", "torre", "corda"],
+    "category": "object",
+    "acceptedNames": ["Sino", "Sinos", "Campainha", "Carrilhão"]
+  },
+  {
+    "saint": "Patena",
+    "forbidden": ["prato", "hóstia", "dourada", "cálice", "maior"],
+    "category": "object",
+    "acceptedNames": ["Patena", "Pratinho", "Prato", "Pátena"]
+  },
+  {
+    "saint": "Círio Pascal",
+    "forbidden": ["vela", "grande", "páscoa", "fogo", "cruz"],
+    "category": "object",
+    "acceptedNames": ["Círio Pascal", "Cirio Pascal", "Cirio", "Círio", "Vela Pascal"]
+  },
+  {
+    "saint": "Crucifixo",
+    "forbidden": ["cruz", "jesus", "altar", "parede", "cristo"],
+    "category": "object",
+    "acceptedNames": ["Crucifixo", "Crussifixo", "Cruz", "Cruz com Jesus"]
+  },
+  {
+    "saint": "Hissope (Aspergente)",
+    "forbidden": ["água", "benta", "jogar", "molhar", "caldeirinha"],
+    "category": "object",
+    "acceptedNames": ["Hissope", "Aspergente", "Aspersório", "Aspersorio"]
+  },
+  {
+    "saint": "Casula",
+    "forbidden": ["veste", "padre", "cor", "missa", "litúrgica"],
+    "category": "object",
+    "acceptedNames": ["Casula", "Cazula", "Roupa do Padre"]
+  },
+  {
+    "saint": "Estola",
+    "forbidden": ["faixa", "pescoço", "padre", "confissão", "sacramento"],
+    "category": "object",
+    "acceptedNames": ["Estola", "Extola"]
+  },
+  {
+    "saint": "Missal",
+    "forbidden": ["livro", "vermelho", "altar", "orações", "padre"],
+    "category": "object",
+    "acceptedNames": ["Missal", "Misal"]
+  },
+  {
+    "saint": "Lecionário",
+    "forbidden": ["livro", "leituras", "ambão", "evangelho", "epístola"],
+    "category": "object",
+    "acceptedNames": ["Lecionário", "Lecionario"]
+  },
+  {
+    "saint": "Mitra",
+    "forbidden": ["bispo", "cabeça", "chapéu", "pontuda", "dom"],
+    "category": "object",
+    "acceptedNames": ["Mitra"]
+  },
+  {
+    "saint": "Báculo",
+    "forbidden": ["cajado", "bispo", "pastor", "dom", "ovelhas"],
+    "category": "object",
+    "acceptedNames": ["Báculo", "Baculo"]
+  },
+  {
+    "saint": "Corporal",
+    "forbidden": ["pano", "quadrado", "hóstia", "cálice", "altar"],
+    "category": "object",
+    "acceptedNames": ["Corporal", "Pano do altar"]
+  },
+  {
+    "saint": "Sanguíneo",
+    "forbidden": ["pano", "limpar", "cálice", "boca", "purificar"],
+    "category": "object",
+    "acceptedNames": ["Sanguíneo", "Sanguineo", "Sanguinho"]
+  },
+  {
+    "saint": "Manustérgio",
+    "forbidden": ["toalha", "mãos", "lavar", "padre", "purificação"],
+    "category": "object",
+    "acceptedNames": ["Manustérgio", "Manustergio", "Toalhinha"]
+  },
 
   // ==========================================
   // CATEGORIA: IGREJAS / LOCAIS
@@ -464,7 +704,7 @@ export const DATA: ForbiddenCard[] = [
     "saint": "Catedral de Nossa Senhora da Conceição",
     "forbidden": ["centro", "sede", "praça", "diocese", "bispo"],
     "category": "church",
-    "acceptedNames": ["Catedral de Nossa Senhora da Conceição", "Catedral da Conceicao", "Catredal", "Tatedral"]
+    "acceptedNames": ["Catedral de Nossa Senhora da Conceição", "Catedral da Conceicao", "Catredal", "Tatedral", "Catedral"]
   },
   {
     "saint": "Igreja de São José",
@@ -489,6 +729,72 @@ export const DATA: ForbiddenCard[] = [
     "forbidden": ["campos", "jovens", "virtudes", "pastoral", "bairro"],
     "category": "church",
     "acceptedNames": ["Paróquia São João Paulo II", "Paroquia Joao Paulo II", "Joao Paulo Segundo", "Joao Paulo"]
+  },
+  {
+    "saint": "Igreja de São Francisco",
+    "forbidden": ["convento", "frades", "praça", "centro", "porciúncula"],
+    "category": "church",
+    "acceptedNames": ["Igreja de São Francisco", "Igreja Sao Francisco", "Paróquia São Francisco", "Convento"]
+  },
+  {
+    "saint": "Santuário do Sagrado Coração de Jesus",
+    "forbidden": ["catolé", "paróquia", "coração", "santuário", "redentorista"],
+    "category": "church",
+    "acceptedNames": ["Santuário do Sagrado Coração de Jesus", "Santuario do Sagrado Coracao", "Igreja do Catolé", "Coração de Jesus"]
+  },
+  {
+    "saint": "Paróquia de Santo Antônio",
+    "forbidden": ["treze", "bairro", "casamento", "franciscano", "festa"],
+    "category": "church",
+    "acceptedNames": ["Paróquia de Santo Antônio", "Igreja de Santo Antonio", "Santo Antônio"]
+  },
+  {
+    "saint": "Paróquia Nossa Senhora do Carmo",
+    "forbidden": ["puxinanã", "bairro", "escapulário", "novena", "carmelitas"],
+    "category": "church",
+    "acceptedNames": ["Paróquia Nossa Senhora do Carmo", "Igreja do Carmo", "Nossa Senhora do Carmo"]
+  },
+  {
+    "saint": "Paróquia da Sagrada Família",
+    "forbidden": ["rocha", "cavalcante", "jesus", "maria", "josé"],
+    "category": "church",
+    "acceptedNames": ["Paróquia da Sagrada Família", "Igreja Sagrada Familia", "Sagrada Família"]
+  },
+  {
+    "saint": "Igreja de São Vicente de Paulo",
+    "forbidden": ["bodocongó", "vicentinos", "caridade", "pobres", "praça"],
+    "category": "church",
+    "acceptedNames": ["Igreja de São Vicente de Paulo", "Paróquia São Vicente", "Igreja de São Vicente"]
+  },
+  {
+    "saint": "Paróquia de São Cristóvão",
+    "forbidden": ["centenário", "motoristas", "procissão", "bairro", "bênção"],
+    "category": "church",
+    "acceptedNames": ["Paróquia de São Cristóvão", "Igreja de São Cristóvão", "São Cristóvão", "Sao Cristovao"]
+  },
+  {
+    "saint": "Paróquia Nossa Senhora das Graças",
+    "forbidden": ["cruzeiro", "medalha", "bairro", "ladeira", "paróquia"],
+    "category": "church",
+    "acceptedNames": ["Paróquia Nossa Senhora das Graças", "Igreja das Graças", "Nossa Senhora das Graças"]
+  },
+  {
+    "saint": "Paróquia Santa Rosa de Lima",
+    "forbidden": ["santa", "bairro", "matriz", "paróquia", "festa"],
+    "category": "church",
+    "acceptedNames": ["Paróquia Santa Rosa de Lima", "Igreja de Santa Rosa", "Santa Rosa"]
+  },
+  {
+    "saint": "Paróquia São João Bosco",
+    "forbidden": ["liberdade", "bairro", "juventude", "oratório", "salesiano"],
+    "category": "church",
+    "acceptedNames": ["Paróquia São João Bosco", "Igreja São João Bosco", "São João Bosco", "Dom Bosco"]
+  },
+  {
+    "saint": "Santuário de Nossa Senhora da Guia",
+    "forbidden": ["galante", "distrito", "forró", "padroeira", "matriz"],
+    "category": "church",
+    "acceptedNames": ["Santuário de Nossa Senhora da Guia", "Igreja de Galante", "Nossa Senhora da Guia"]
   }
 ];
 
@@ -503,60 +809,58 @@ function shuffle<T>(arr: T[]): T[] {
   return copy;
 }
 
-function shuffleInterleaved(): ForbiddenCard[] {
-  const groups: Record<string, ForbiddenCard[]> = {};
-  for (const card of DATA) {
-    if (!groups[card.category]) groups[card.category] = [];
-    groups[card.category].push(card);
+// Two categories are level when their draw progress matches to within this,
+// which lets a genuine tie break at random instead of favouring a fixed order.
+const RATIO_TIE = 1e-9;
+
+// Takes any subset of the deck so the round builder can shuffle only the cards
+// a player has not seen yet.
+export function shuffleInterleaved(cards: ForbiddenCard[] = DATA): ForbiddenCard[] {
+  const buckets: ForbiddenCard[][] = [];
+  const bucketOf: Record<string, number> = {};
+  for (const card of cards) {
+    if (bucketOf[card.category] === undefined) {
+      bucketOf[card.category] = buckets.length;
+      buckets.push([]);
+    }
+    buckets[bucketOf[card.category]].push(card);
   }
 
-  for (const key of Object.keys(groups)) {
-    groups[key] = shuffle(groups[key]);
+  for (const bucket of buckets) {
+    const shuffled = shuffle(bucket);
+    bucket.length = 0;
+    bucket.push(...shuffled);
   }
 
-  const pointers: Record<string, number> = {};
-  for (const key of Object.keys(groups)) {
-    pointers[key] = 0;
-  }
-
+  const pointers = new Array<number>(buckets.length).fill(0);
   const result: ForbiddenCard[] = [];
-  const catList = shuffle(Object.keys(groups));
-  let remaining = DATA.length;
-
-  while (remaining > 0) {
-    const shuffledCats = shuffle(catList.filter((c) => pointers[c] < groups[c].length));
-    for (const cat of shuffledCats) {
-      if (pointers[cat] < groups[cat].length) {
-        result.push(groups[cat][pointers[cat]]);
-        pointers[cat]++;
-        remaining--;
+  // Always draws from the category that is furthest behind its own share of the
+  // deck, so the categories stay mixed for the whole round. Taking one card per
+  // category per pass instead drained the small ones first: with 57 saints
+  // against 16 churches it ended the deck on 30 consecutive saints.
+  while (result.length < cards.length) {
+    let best = -1;
+    let bestRatio = Number.POSITIVE_INFINITY;
+    for (let index = 0; index < buckets.length; index += 1) {
+      if (pointers[index] >= buckets[index].length) continue;
+      const ratio = pointers[index] / buckets[index].length;
+      // Ties break at random so a round does not always open on the same
+      // category.
+      if (ratio < bestRatio - RATIO_TIE || (Math.abs(ratio - bestRatio) <= RATIO_TIE && Math.random() < 0.5)) {
+        best = index;
+        bestRatio = ratio;
       }
     }
+    if (best === -1) break;
+    result.push(buckets[best][pointers[best]]);
+    pointers[best] += 1;
   }
 
   return result;
 }
 
-let shuffled: ForbiddenCard[] | null = null;
-let pointer = 0;
-
-export function getShuffledCards(): ForbiddenCard[] {
-  if (!shuffled) {
-    shuffled = shuffleInterleaved();
-    pointer = 0;
-  }
-  return shuffled;
-}
-
-export function getNextCard(): ForbiddenCard {
-  const cards = getShuffledCards();
-  const card = cards[pointer % cards.length];
-  pointer++;
-  if (pointer % cards.length === 0) {
-    shuffled = shuffleInterleaved();
-    pointer = 0;
-  }
-  return card;
-}
-
+// The round builder in `src/lib/forbidden-deck.ts` owns the draw order and the
+// "already seen" memory. A pointer over a single memoized shuffle used to live
+// here, but it re-delivered the same cards right after a full cycle and kept
+// no memory across reloads, which is exactly what the no-repeat rule forbids.
 export default DATA;

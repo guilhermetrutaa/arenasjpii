@@ -149,6 +149,45 @@
 
 .roundInfo { margin: 0; color: #8fa7c6; font-size: 12px; font-weight: 600; }
 
+/* Lives inside the game card so the operator resets the deck of the screen they
+   are actually watching, with the two-press arm keeping a drifting Air Mouse
+   from wiping the seen cards mid-round. */
+.deckBox {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-left: 4px solid #edd686;
+  border-radius: 8px;
+  background: #0f1b2d;
+}
+
+.deckBox h3 { margin: 0; font-size: 12px; letter-spacing: 1px; color: #8fa7c6; text-transform: uppercase; }
+.deckInfo { margin: 2px 0 0; color: #cddcef; font-size: 13px; font-weight: 600; }
+.deckInfo strong { font-family: var(--font-digital-numbers), var(--font-syne), sans-serif; color: #edd686; font-size: 17px; }
+
+.deckReset {
+  padding: 9px 12px;
+  border: 1px solid #2f4a6d;
+  border-radius: 10px;
+  background: #1b2f4a;
+  color: #cddcef;
+  font: 800 12px/1 var(--font-syne), sans-serif;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.deckReset:hover:not(:disabled) { background: #24405f; border-color: #edd686; }
+.deckReset:disabled { opacity: 0.45; cursor: not-allowed; }
+.deckReset:focus-visible { outline: 3px solid #edd686; outline-offset: 2px; }
+.deckResetArmed { background: #a12d2d; border-color: #ff9d9d; color: #fff; }
+.deckResetArmed:hover:not(:disabled) { background: #c23636; }
+
 .actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 
 .action {

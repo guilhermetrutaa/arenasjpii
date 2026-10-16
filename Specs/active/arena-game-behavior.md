@@ -14,21 +14,61 @@ folder remains reference-only and must not be modified.
 - Game values must be rendered by the client game state; the static placeholder
   values in the visual reference are not the final runtime values.
 
+## Palavra Proibida deck without repetition
+
+- A round is dealt only from the cards a player has not faced yet. Nothing
+  repeats until every card in the deck has been used, and the cycle then
+  restarts with the whole deck available again.
+- The unit that never repeats is the **card**: the target word together with its
+  five forbidden words. The forbidden words themselves **may repeat** between
+  cards and rounds. Two distinct cards carrying the same five forbidden words
+  are expected to appear within the same cycle; they are not a repetition.
+  Forbidden words are display content and speech-detection input, never a draw
+  filter.
+- A card counts as used as soon as it reaches the screen, so an interrupted
+  round still consumes what the team actually saw. Only advancing the round,
+  not finishing it, is what marks a card.
+- The memory of used cards is stored in the browser under
+  `arena:palavra-proibida:usadas`, so it survives navigation, reloads and a
+  browser restart. Cards are identified by their category and target word, not
+  by position: adding a card makes it immediately available, renaming one
+  returns it to the pool, and removing one drops its leftover entry.
+- Unreadable storage, an unexpected shape, and keys whose card no longer exists
+  are discarded instead of breaking the round; the game falls back to dealing
+  the whole deck.
+- The operator can clear the memory from `/admin`, next to the running game, so
+  an interrupted round does not permanently remove those cards. The panel shows
+  how many cards are still available. Resetting the deck does not restart the
+  round clock.
+- Within a round the categories stay mixed: the deck is drawn from whichever
+  category is furthest behind its own share, so the smaller groups do not drain
+  early and leave a block of one category at the end.
+
 ## Palavra Proibida deck
 
 - The deck in `src/data/forbidden-cards.ts` favors widely known names so the
   game stays accessible to a general Catholic audience.
+- The deck holds 128 cards: 57 saints, 28 priests and religious, 27 liturgical
+  objects and 16 churches. Every card carries exactly five forbidden words.
 - Saints: only popular saints, Marian titles, archangels, and apostles; obscure
   saints (e.g. São Frutuoso, São Guido, São Policarpo, Santo Hilário) are
   excluded.
-- Priests and religious: nationally known priests plus the local references
-  Dom Dulcênio, Padre Nilson Nunes, and Padre Rodolfo Lucena.
-- Liturgical objects: only commonly known items (Bíblia, Hóstia, Altar,
-  Cálice, Sacrário, Rosário, Pia Batismal, Ostensório).
-- Churches of Campina Grande: Catedral de Nossa Senhora da Conceição, Igreja
-  de São José, Igreja de Nossa Senhora do Rosário, Paróquia São João Paulo II,
-  and Paróquia Nossa Senhora de Fátima.
+- Priests and religious: nationally known priests, the three popes, plus the
+  local references Dom Dulcênio, Padre Nilson Nunes, and Padre Rodolfo Lucena.
+- Liturgical objects: commonly known items of the celebration, from the
+  everyday (Bíblia, Hóstia, Altar, Cálice, Rosário) to the altar linen and
+  vestments (Casula, Estola, Mitra, Báculo, Corporal, Manustérgio).
+- Churches of Campina Grande: the Catedral de Nossa Senhora da Conceição, the
+  Igreja de São José, Igreja de Nossa Senhora do Rosário, Paróquia Nossa Senhora
+  de Fátima, Paróquia São João Paulo II, Igreja de São Francisco, Santuário do
+  Sagrado Coração de Jesus, Paróquia de Santo Antônio, Paróquia Nossa Senhora do
+  Carmo, Paróquia da Sagrada Família, Igreja de São Vicente de Paulo, Paróquia
+  de São Cristóvão, Paróquia Nossa Senhora das Graças, Paróquia Santa Rosa de
+  Lima, Paróquia São João Bosco, and Santuário de Nossa Senhora da Guia.
 - Forbidden words of the remaining cards are unchanged.
+- Distinct cards may share the same five forbidden words, for example São João
+  Paulo II and Papa São João Paulo II. This is allowed; see the no-repetition
+  rule above.
 
 ## Printable card sheet
 

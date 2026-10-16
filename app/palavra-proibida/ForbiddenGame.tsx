@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { DATA, type ForbiddenCard } from "@/src/data/forbidden-cards";
+import type { ForbiddenCard } from "@/src/data/forbidden-cards";
+import { DECK_TOTAL, clearDeckMemory, createDeck, rememberCard } from "@/src/lib/forbidden-deck";
 import { detectForbiddenWords } from "@/src/lib/detection";
 import { startContinuousSpeechRecognition } from "@/src/lib/speech-recognition";
 import { openGameChannel, type GameChannel } from "@/src/lib/control-client";
@@ -11,15 +12,6 @@ import styles from "@/app/game-runtime.module.css";
 
 type Outcome = "hit" | "fault" | "skip";
 type SpeechControl = ReturnType<typeof startContinuousSpeechRecognition>;
-
-function shuffle<T>(values: T[]): T[] {
-  const copy = [...values];
-  for (let index = copy.length - 1; index > 0; index -= 1) {
-    const target = Math.floor(Math.random() * (index + 1));
-    [copy[index], copy[target]] = [copy[target], copy[index]];
-  }
-  return copy;
-}
 
 export default function ForbiddenGame() {
   const router = useRouter();
@@ -38,6 +30,7 @@ export default function ForbiddenGame() {
   const finishedRef = useRef(false);
   const startedRef = useRef(false);
   const advanceRef = useRef<(outcome: Outcome) => void>(() => undefined);
+  const resetDeckRef = useRef<() => void>(() => undefined);
   const initializedRef = useRef(false);
   const channelRef = useRef<GameChannel | null>(null);
   const startedAtRef = useRef(0);
@@ -46,6 +39,9 @@ export default function ForbiddenGame() {
 
   useEffect(() => {
     cardRef.current = current ?? null;
+    // A card counts as used the moment it reaches the screen, so an
+    // interrupted round still consumes what the team actually saw.
+    if (current) rememberCard(current);
   }, [current]);
 
   useEffect(() => {
@@ -92,7 +88,7 @@ export default function ForbiddenGame() {
   useEffect(() => () => speechRef.current?.stop(), []);
 
   const begin = () => {
-    const nextDeck = shuffle(DATA);
+    const nextDeck = createDeck();
     startedRef.current = true;
     startedAtRef.current = Date.now();
     setDeck(nextDeck);
@@ -125,6 +121,24 @@ export default function ForbiddenGame() {
   useEffect(() => {
     advanceRef.current = advance;
   }, [advance]);
+
+  // Operator escape hatch for a round that was cut short: forget the seen
+  // cards and deal the whole deck again from the first card. The clock keeps
+  // running because resetting the deck is not a round restart.
+  const resetDeck = useCallback(() => {
+    clearDeckMemory();
+    const nextDeck = createDeck();
+    // The card effect below only fires when the visible card actually changes,
+    // so a reshuffle that puts the current card back at the front would leave
+    // it unmarked.
+    if (nextDeck.length > 0) rememberCard(nextDeck[0]);
+    setDeck(nextDeck);
+    setCardIndex(0);
+  }, []);
+
+  useEffect(() => {
+    resetDeckRef.current = resetDeck;
+  }, [resetDeck]);
 
   const startMicrophone = () => {
     speechRef.current?.stop();
@@ -172,7 +186,14 @@ export default function ForbiddenGame() {
   useEffect(() => {
     const channel = openGameChannel({
       game: "palavra-proibida",
-      onCommand: (action) => advanceRef.current(action),
+      onCommand: (action) => {
+        if (action === "resetDeck") {
+          resetDeckRef.current();
+          channelRef.current?.publishNote("Baralho reiniciado pelo painel do operador");
+          return;
+        }
+        advanceRef.current(action);
+      },
     });
     channelRef.current = channel;
     channel.publishNote("Tela de Palavra Proibida conectada ao painel");
@@ -197,6 +218,7 @@ export default function ForbiddenGame() {
       seconds,
       round: deck.length === 0 ? 0 : cardIndex + 1,
       rounds: deck.length,
+      deckTotal: DECK_TOTAL,
       speechMessage,
       promptLabel: current?.saint ?? "Palavra Proibida",
       promptItems: current?.forbidden ?? [],
