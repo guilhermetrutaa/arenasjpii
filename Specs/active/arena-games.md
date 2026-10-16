@@ -41,6 +41,11 @@ shown in Figma.
 - Game data, audio, recognition, and runtime interaction follow
   `arena-game-behavior.md`; no implementation changes are permitted inside
   `desafio-crescer2`.
+- The Emoji dos Santos screen was extended with a pre-match level screen, a
+  hint/reveal area and an end-of-match screen. These reuse the approved header,
+  title, prompt box, stat treatment, local assets and typography instead of
+  introducing a new composition; only the emoji prompt is slightly smaller so
+  the level, hints, reveal and scoreboard fit on one screen on a TV.
 
 ## Open items
 

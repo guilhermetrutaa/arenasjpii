@@ -1,0 +1,243 @@
+/* Emojis dos Santos — telas de escolha do nível, dicas e revelação.
+   Mantém a identidade visual do Arena SJPII (azul #14345d, dourado #edd686,
+   Syne nos rótulos e Digital Numbers nos números). Este arquivo existe para
+   não alterar game-runtime.module.css, que também serve à Palavra Proibida. */
+
+.subtitle {
+  margin: 18px 0 0;
+  color: #14345d;
+  font: 700 clamp(16px, 2vw, 24px) var(--font-syne), sans-serif;
+  text-align: center;
+}
+
+.closing {
+  width: min(100%, 900px);
+  margin: 18px 0 0;
+  color: #14345d;
+  font: 600 clamp(16px, 2.1vw, 26px) var(--font-syne), sans-serif;
+  text-align: center;
+}
+
+/* --- Escolha de dificuldade ------------------------------------------- */
+
+.difficultyGrid {
+  width: min(100%, 1040px);
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.difficultyCard {
+  min-height: 300px;
+  padding: 26px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 4px solid #14345d;
+  border-radius: 26px;
+  background: #fff;
+  color: #14345d;
+  font-family: var(--font-syne), sans-serif;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.difficultyCard:hover { background: #eef3f8; transform: translateY(-3px); }
+.difficultyCard:focus-visible { outline: 4px solid #edd686; outline-offset: 4px; }
+
+.difficultyCardActive {
+  background: #14345d;
+  border-color: #14345d;
+  box-shadow: 0 0 0 6px #edd686;
+  color: #fff;
+}
+.difficultyCardActive:hover { background: #1d4474; }
+
+.difficultyLabel { font-size: clamp(26px, 3.4vw, 40px); font-weight: 800; line-height: 1; }
+.difficultyTagline {
+  font-size: clamp(14px, 1.7vw, 20px);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.85;
+}
+.difficultyMultiplier {
+  margin-top: 4px;
+  font-family: var(--font-digital-numbers), var(--font-syne), sans-serif;
+  font-size: clamp(44px, 6vw, 72px);
+  line-height: 1;
+}
+.difficultyPoints {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #edd686;
+  color: #14345d;
+  font: 700 clamp(13px, 1.5vw, 18px) var(--font-syne), sans-serif;
+}
+.difficultyCardActive .difficultyPoints { background: #fff; color: #14345d; }
+.difficultyDescription { font: 500 clamp(13px, 1.5vw, 17px) var(--font-syne), sans-serif; opacity: 0.9; }
+
+/* --- Cabeçalho da rodada ---------------------------------------------- */
+
+.levelBar {
+  width: min(100%, 811px);
+  margin: 10px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 16px;
+  color: #14345d;
+  font: 700 clamp(14px, 1.7vw, 20px) var(--font-syne), sans-serif;
+  text-align: center;
+}
+
+.levelBadge {
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: #14345d;
+  color: #fff;
+}
+
+/* Os emojis encolhem um pouco para caberem com dicas, revelação e placar na
+   mesma tela de TV, sem perder a moldura aprovada em arena-games.md. */
+.emojiPrompt { min-height: clamp(88px, 12vh, 118px); }
+.emojiPrompt p { font-size: clamp(38px, 5.2vw, 58px); }
+
+/* --- Dicas ------------------------------------------------------------ */
+
+.hints {
+  width: min(100%, 811px);
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hint {
+  margin: 0;
+  padding: 10px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  border-left: 10px solid #edd686;
+  border-radius: 14px;
+  background: #fff;
+  color: #14345d;
+  font: 600 clamp(15px, 1.7vw, 21px) / 1.3 var(--font-syne), sans-serif;
+  text-align: left;
+  animation: hint-in 0.35s ease both;
+}
+
+.hintBadge {
+  flex: 0 0 auto;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #14345d;
+  color: #fff;
+  font-size: clamp(12px, 1.3vw, 16px);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.hintPlaceholder {
+  width: min(100%, 811px);
+  margin: 16px 0 0;
+  color: #14345d;
+  font: 600 clamp(13px, 1.5vw, 18px) var(--font-syne), sans-serif;
+  text-align: center;
+  opacity: 0.75;
+}
+
+/* --- Revelação da resposta -------------------------------------------- */
+
+.reveal {
+  width: min(100%, 811px);
+  margin-top: 12px;
+  padding: 12px 22px;
+  border-radius: 22px;
+  background: #14345d;
+  color: #fff;
+  font-family: var(--font-syne), sans-serif;
+  text-align: center;
+  animation: hint-in 0.35s ease both;
+}
+
+.revealHit { background: #edd686; color: #14345d; }
+
+.revealName { margin: 0; font-size: clamp(24px, 3.1vw, 38px); line-height: 1.1; }
+/* Só o número usa a fonte digital: a palavra "ponto" ficaria ilegível nela. */
+.revealPoints { margin: 6px 0 0; font: 700 clamp(17px, 2.2vw, 26px) var(--font-syne), sans-serif; }
+.revealPointsValue {
+  font-family: var(--font-digital-numbers), var(--font-syne), sans-serif;
+  font-size: clamp(28px, 3.4vw, 42px);
+}
+.revealCuriosity { margin: 8px 0 0; font: 600 clamp(14px, 1.6vw, 20px) / 1.35 var(--font-syne), sans-serif; }
+
+@keyframes hint-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* --- Placar ----------------------------------------------------------- */
+
+/* Durante a rodada só o essencial: pontos e tempo. A contagem de acertos fica
+   na tela do QR Code, onde ela tem espaço para ser explicada. */
+.roundStats {
+  width: min(100%, 811px);
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.stat {
+  min-height: 150px;
+  padding: 20px 10px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24px;
+  font-family: var(--font-syne), sans-serif;
+  text-align: center;
+}
+
+.stat h2 { margin: 0; font-size: clamp(16px, 2.2vw, 26px); line-height: 1.2; }
+.stat p {
+  margin: 6px 0 0;
+  font-family: var(--font-digital-numbers), var(--font-syne), sans-serif;
+  font-size: clamp(42px, 5.4vw, 62px);
+  line-height: 1.1;
+}
+
+.statPoints { background: #14345d; color: #fff; }
+.statTime { border: 4px solid #14345d; background: #d9d9d9; color: #14345d; }
+
+/* As duas cartas da rodada mantêm a proporção da linha de pontos e tempo
+   aprovada no Figma, agora com o dobro de largura por ter menos cartões. */
+.roundStats .stat { min-height: 140px; }
+.roundStats .stat p { font-size: clamp(48px, 6vw, 68px); }
+
+@media (max-width: 900px) {
+  .difficultyGrid { grid-template-columns: 1fr; }
+  .difficultyCard { min-height: 0; }
+}
+
+@media (max-width: 650px) {
+  .roundStats { grid-template-columns: 1fr; }
+  .stat { min-height: 120px; }
+  .hint { gap: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hint,
+  .reveal { animation: none; }
+  .difficultyCard { transition: none; }
+}

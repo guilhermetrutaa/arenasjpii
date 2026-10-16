@@ -171,7 +171,8 @@ function GameCard({ game, label, short, state, heard, online, selected, onSelect
       </div>
 
       <p className={styles.roundInfo}>
-        {state?.rounds ? `Rodada ${state.round} de ${state.rounds}` : "Sem rodadas"} · {state?.speechMessage || "sem status de microfone"}
+        {state?.rounds ? `Rodada ${state.round} de ${state.rounds}` : "Sem rodadas"}
+        {state?.difficulty ? ` · ${state.difficulty}` : ""} · {state?.speechMessage || "sem status de microfone"}
       </p>
 
       {game === "palavra-proibida" && (

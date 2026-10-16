@@ -36,6 +36,8 @@ export type ControlState = {
   promptItems: string[];
   // "Emoji dos Santos" only: which saint the emojis actually point to.
   answer: string | null;
+  // "Emoji dos Santos" only: chosen level with its multiplier, e.g. "Fácil (×1)".
+  difficulty?: string | null;
 };
 
 export type ControlHeard = {

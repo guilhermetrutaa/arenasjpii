@@ -12,9 +12,17 @@ type Result = {
   skips: number;
   faults: number;
   total: number;
+  /** "Emoji dos Santos" only: level played, e.g. "facil". */
+  difficulty?: string | null;
 };
 
 type TokenPayload = Result & { resultId: string; createdAt: number; expiresAt: number };
+
+const EMOJI_LEVEL: Record<string, string> = {
+  facil: "Fácil (×1)",
+  medio: "Médio (×2)",
+  desafio: "Desafio (×3)",
+};
 
 function decodeToken(token: string): TokenPayload | null {
   try {
@@ -50,6 +58,8 @@ export default function ResultClient() {
   }
 
   const gameName = result.game === "palavra-proibida" ? "Palavra Proibida" : "Emojis dos Santos";
+  const isEmoji = result.game === "emoji-dos-santos";
+  const levelLabel = result.difficulty ? EMOJI_LEVEL[result.difficulty] ?? result.difficulty : null;
   return (
     <main className={`${styles.gamePage} ${styles.resultPage}`}>
       <section className={styles.gameCanvas}>
@@ -57,10 +67,22 @@ export default function ResultClient() {
         <h1 className={styles.gameTitle}>FIM DE JOGO</h1>
         <div className={styles.resultGrid}>
           <div className={styles.resultSummary}>
-            <div className={styles.prompt}><strong>{gameName}</strong><span>Compartilhe o resultado com sua equipe</span></div>
+            <div className={styles.prompt}>
+              <strong>{gameName}</strong>
+              <span>{levelLabel ? `Nível ${levelLabel}` : "Compartilhe o resultado com sua equipe"}</span>
+            </div>
             <div className={styles.stats}>
-              <section className={`${styles.stat} ${styles.score}`}><h2>ACERTOS</h2><p>{result.hits}</p></section>
-              <section className={`${styles.stat} ${styles.time}`}><h2>ERROS</h2><p>{result.faults}</p></section>
+              {isEmoji ? (
+                <>
+                  <section className={`${styles.stat} ${styles.score}`}><h2>PONTOS</h2><p>{result.score}</p></section>
+                  <section className={`${styles.stat} ${styles.time}`}><h2>NÃO ACERTADAS</h2><p>{Math.max(result.total - result.hits, 0)}</p></section>
+                </> 
+              ) : (
+                <>
+                  <section className={`${styles.stat} ${styles.score}`}><h2>ACERTOS</h2><p>{result.hits}</p></section>
+                  <section className={`${styles.stat} ${styles.time}`}><h2>ERROS</h2><p>{result.faults}</p></section>
+                </>
+              )}
             </div>
           </div>
           <div className={styles.resultQr}>

@@ -97,6 +97,7 @@ export async function POST(request: Request) {
       promptLabel: readString(source.promptLabel, 120),
       promptItems: readStringList(source.promptItems),
       answer: typeof source.answer === "string" ? source.answer.slice(0, 120) : null,
+      difficulty: typeof source.difficulty === "string" ? source.difficulty.slice(0, 40) : null,
     };
     recordGameState(state);
     return NextResponse.json({ ok: true, staleMs: CONTROL_STALE_MS }, { headers: { "Cache-Control": "no-store" } });

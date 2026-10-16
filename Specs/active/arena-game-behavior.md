@@ -9,10 +9,91 @@ folder remains reference-only and must not be modified.
 
 - `/palavra-proibida`: 90-second game, five forbidden words per card, score only
   for confirmed hits, automatic fault on forbidden speech, and Air Mouse control.
-- `/emoji-dos-santos`: eight rounds of 30 seconds, three emojis per saint,
-  speech detection with Air Mouse confirmation, timeout/manual skip.
+- `/emoji-dos-santos`: a difficulty is chosen before the match, then eight rounds
+  of 30 seconds, three emojis per saint, cumulative hints at 10s and 20s,
+  speech detection with Air Mouse confirmation, timeout/manual skip, and a
+  point score that depends on the chosen difficulty.
 - Game values must be rendered by the client game state; the static placeholder
   values in the visual reference are not the final runtime values.
+
+## Emoji dos Santos difficulty, hints, and scoring
+
+The player chooses one of three difficulties **before** the match, on a screen
+that shows the multiplier and the promise of each level. The choice is fixed
+for the eight rounds of that match and is only re-chosen for the next match.
+
+- `Fácil` — "Comece a jogar", multiplier `×1`. Popular Brazilian saints with
+  intuitive emoji sets.
+- `Médio` — "Vale o dobro", multiplier `×2`. Saints of intermediate knowledge.
+- `Desafio` — "Vale o triplo", multiplier `×3`. Less known saints and subtler
+  emoji associations.
+- Every saint in `src/data/emoji-dos-santos.ts` carries `id`, the normalized
+  `name` used by the speech detector, a `displayName` for the reveal, the
+  `emojis`, its `difficulty`, `hint1`, `hint2`, a short educational
+  `curiosity`, and the ASR `acceptedNames`. The comments above each entry
+  record why the emojis point to that saint.
+- At least eight saints exist per difficulty, so a match never repeats a saint
+  and is never a pure coincidence of the shuffle.
+
+Round timeline, with `H` the elapsed seconds of the current round:
+
+- `0 <= H < 10`: emojis only, no textual hint.
+- `H >= 10` and the round is still open: `hint1` appears.
+- `H >= 20` and the round is still open: `hint2` appears **in addition** to
+  `hint1`; the hints are cumulative and never replace each other.
+- `H >= 30` with no correct answer: the round closes as unanswered, the saint's
+  name and curiosity are revealed, and the round counts as not scored.
+- A correct answer stops that round's clock immediately, releases only the
+  hints already shown, awards the points once, and reveals the same name and
+  curiosity. Hints scheduled after that moment are never displayed.
+- Hints are derived from the round clock, not from extra timers, so a round has
+  exactly one interval and one reveal timeout, both cleared when the round
+  changes and when the component unmounts.
+
+Points:
+
+- `round points = EMOJI_BASE_POINTS (1) × difficulty multiplier`, so the score
+  is literally the number of correct emoji combinations multiplied by the
+  level: three hits in `Médio` are worth `3 × 2 = 6` points.
+- Only a correct answer scores. A wrong answer, a timeout, and an operator
+  fault score zero, and no round can score twice.
+- The total is the plain sum of the eight rounds: 8 (Fácil), 16 (Médio) or
+  24 (Desafio) for a perfect match. The ranking keeps accumulating the score of
+  every match a team plays.
+- Hints never subtract points and speed never adds points.
+- `/api/results` validates the emoji score against the level carried in the
+  payload (`score === hits × multiplier`), and falls back to the `hits × 3`
+  ceiling when the level is absent, so a tampered score is rejected either way.
+  `hits` is the number of scored rounds, not the point total.
+
+Screens:
+
+- The pre-match screen lists the three levels with their multipliers; the
+  active one is highlighted and can be chosen with a click or with the Air
+  Mouse. `PageUp` starts the match, `ArrowUp`/`ArrowDown` move the selection.
+- During a round the screen keeps the emojis, the 30-second clock, the running
+  point total, the chosen level with its multiplier, the round counter, the
+  hints already released, and the microphone status line. The scoreboard shows
+  **only PONTOS and TEMPO**: the hit count is not repeated while playing.
+- When a round closes, the reveal panel shows the correct name, the awarded
+  points (or that no points were awarded), and the curiosity. `PageUp`
+  continues to the next round immediately instead of waiting for the reveal.
+- There is **no end-of-match screen inside the game**. After the eighth round
+  the game keeps the last reveal on screen while it requests the signed result
+  and then sends the player to `/resultado`, the QR Code screen.
+- `/resultado` shows, for the emoji game, only `PONTOS` and `NÃO ACERTADAS`,
+  plus the level the match was played on; "Palavra Proibida" keeps its
+  `ACERTOS`/`ERROS` cards. Replaying means opening the game again, where the
+  level screen starts a new match from zero.
+
+Speech:
+
+- Speech remains the primary answer channel, with the Air Mouse and `/admin`
+  as the manual alternatives.
+- A speech failure is a technical problem, not a wrong answer: it never scores,
+  never advances, and never resets the round clock. It shows a friendly message
+  with a control to retry the microphone.
+
 
 ## Palavra Proibida deck without repetition
 

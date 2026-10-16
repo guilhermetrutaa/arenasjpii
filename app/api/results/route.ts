@@ -1,8 +1,15 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { signResult, type GameKind, type ResultPayload } from "@/src/lib/ranking-token";
+import { EMOJI_DIFFICULTY_BY_ID, EMOJI_MAX_ROUND_POINTS, type EmojiDifficultyId } from "@/src/data/emoji-dos-santos";
 
 const games = new Set<GameKind>(["palavra-proibida", "emoji-dos-santos"]);
+
+// O token carrega o nível para que a pontuição possa ser conferida servidor a
+// servidor: pontos = acertos × multiplicador do nível.
+function readDifficulty(value: unknown): EmojiDifficultyId | null {
+  return typeof value === "string" && value in EMOJI_DIFFICULTY_BY_ID ? (value as EmojiDifficultyId) : null;
+}
 
 export async function POST(request: Request) {
   try {
@@ -20,7 +27,23 @@ export async function POST(request: Request) {
     if (score < 0 || hits < 0 || skips < 0 || faults < 0 || total < 1) {
       return NextResponse.json({ error: "Resultado inválido" }, { status: 400 });
     }
-    if (score > total || hits + skips + faults !== total) {
+    // "Emoji dos Santos" pays per correct round, so its score is points rather
+    // than a count, and the operator's `fault` is an event outside the eight
+    // rounds: only acertos and non-scored rounds have to add up. "Palavra
+    // Proibida" keeps the original rule, where a fault consumes the card.
+    const roundsConsistent = game === "emoji-dos-santos"
+      ? hits + skips === total
+      : hits + skips + faults === total;
+    if (!roundsConsistent) {
+      return NextResponse.json({ error: "Resultado inconsistente" }, { status: 400 });
+    }
+    const difficulty = game === "emoji-dos-santos" ? readDifficulty(body.difficulty) : null;
+    const scoreIsConsistent = game === "emoji-dos-santos"
+      ? difficulty
+        ? score === hits * EMOJI_DIFFICULTY_BY_ID[difficulty].multiplier
+        : score <= hits * EMOJI_MAX_ROUND_POINTS
+      : score <= total;
+    if (!scoreIsConsistent) {
       return NextResponse.json({ error: "Resultado inconsistente" }, { status: 400 });
     }
 
@@ -33,6 +56,7 @@ export async function POST(request: Request) {
       skips,
       faults,
       total,
+      ...(game === "emoji-dos-santos" && difficulty ? { difficulty } : {}),
       createdAt: now,
       expiresAt: now + 1000 * 60 * 60 * 24 * 30,
     };

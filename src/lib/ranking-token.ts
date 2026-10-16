@@ -10,6 +10,8 @@ export type ResultPayload = {
   skips: number;
   faults: number;
   total: number;
+  /** "Emoji dos Santos" only: the level the match was played on. */
+  difficulty?: string | null;
   createdAt: number;
   expiresAt: number;
 };
