@@ -27,7 +27,12 @@ export function signResult(payload: ResultPayload): string {
 }
 
 export function verifyResult(token: string): ResultPayload | null {
-  const [data, signature] = token.split(".");
+  // Exactly `data.signature`. A longer token is malformed rather than valid:
+  // silently ignoring trailing segments would let a tampered token through the
+  // length check that guards `timingSafeEqual`.
+  const parts = token.split(".");
+  if (parts.length !== 2) return null;
+  const [data, signature] = parts;
   if (!data || !signature) return null;
   const expected = createHmac("sha256", secret()).update(data).digest("base64url");
   const receivedBuffer = Buffer.from(signature);

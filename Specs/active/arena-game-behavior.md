@@ -81,8 +81,29 @@ folder remains reference-only and must not be modified.
 - Team names are normalized by case, accents, punctuation, and repeated or
   edge whitespace. A normalized name identifies the existing team and never
   creates a duplicate.
+- A team keeps the display name it first registered with. A later submission
+  that resolves to the same team must not overwrite the leaderboard spelling.
 - Result tokens are validated server-side, expire, are single-use, and are safe
   against client score editing.
+
+## Admin manual scoring
+
+- The `/admin` panel gains a ranking section so an operator can record scores
+  taken outside the QR flow, for example from a WhatsApp tally.
+- The operator types a team name and an integer amount of points. The amount is
+  **added** to the team's `totalScore` and `totalGames`, never replaced.
+- A team name that normalizes to an existing team resolves to that team, so the
+  operator never creates a duplicate. A name that does not exist creates the
+  team with `totalScore` equal to the amount and `totalGames` equal to one.
+- Negative amounts are accepted so the operator can reverse a mistake recorded
+  with the wrong value. The resulting `totalScore` may fall to zero but is never
+  allowed below zero.
+- Each manual entry writes an audit record to `gameResults` with `game:
+  "manual"` and `source: "admin"`, so adjustments stay traceable.
+- Manual entries carry a client-generated `operationId` and are idempotent: a
+  repeated submission of the same id is rejected instead of scored twice.
+- `/admin` and its ranking endpoint remain unauthenticated by explicit user
+  decision; the panel is expected to be used only on the venue network.
 
 ## Firebase
 
@@ -91,6 +112,12 @@ folder remains reference-only and must not be modified.
 - Writes and ranking updates go through Next.js route handlers using Firebase
   Admin; the client must not write scores directly.
 - The root project must provide `.env.example`; no secret values are committed.
+- Ranking write routes must log the underlying failure server-side and return a
+  specific, actionable message. A missing or revoked Firebase Admin credential
+  must be reported as such instead of being collapsed into a generic failure.
+- The admin ranking endpoint exposes a read-only status flag indicating whether
+  Firebase Admin credentials are usable, so the panel can warn the operator
+  before they start typing scores.
 
 ## Speech
 
@@ -106,6 +133,8 @@ folder remains reference-only and must not be modified.
   controls; the headset is the speech input.
 - The result page and ranking page follow the Arena SJPII visual system.
 - Firestore ranking updates are validated and idempotent.
+- Admin manual scoring adds to existing totals, creates missing teams, and is
+  idempotent per operation.
 - `.env.example` documents Firebase, Firebase Admin, AssemblyAI, and signing
   configuration without secrets.
 - Root lint, typecheck, and build pass without including the nested reference

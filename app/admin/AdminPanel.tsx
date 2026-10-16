@@ -12,6 +12,7 @@ import {
 } from "@/src/lib/control";
 import { openPanelChannel } from "@/src/lib/control-client";
 import { useAirMouseControls } from "@/src/hooks/use-air-mouse-controls";
+import RankingBoard from "./RankingBoard";
 import styles from "./admin.module.css";
 
 const ACTION_LABEL: Record<ControlCommandAction, string> = {
@@ -371,6 +372,8 @@ export default function AdminPanel() {
           />
         ))}
       </div>
+
+      <RankingBoard />
 
       <section className={styles.logBox}>
         <h2>Eventos</h2>
