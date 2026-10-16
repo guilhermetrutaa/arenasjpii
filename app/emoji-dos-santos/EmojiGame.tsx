@@ -532,7 +532,6 @@ export default function EmojiGame() {
           <button type="button" className={styles.secondary} onClick={startMicrophone}>Reconectar microfone</button>
         </div>
       )}
-      <p className={styles.speechStatus}>Responda falando o nome do santo, ou use PageUp (acerto) e PageDown (pular).</p>
       {feedback && (
         <p
           className={`${feedbackStyles.speechFeedback} ${spudCrisp.className} ${feedback === "wrong" ? feedbackStyles.speechFeedbackWrong : feedbackStyles.speechFeedbackPartial}`}

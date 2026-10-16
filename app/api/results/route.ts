@@ -34,7 +34,11 @@ export async function POST(request: Request) {
     const roundsConsistent = game === "emoji-dos-santos"
       ? hits + skips === total
       : hits + skips + faults === total;
-    if (!roundsConsistent) {
+    // Uma partida sem nenhuma jogada (ninguém respondeu nos 90 s da Palavra
+    // Proibida) chega com todos os contadores zerados e `total` 1 só para o
+    // resultado ser válido. Nesse caso a soma não precisa fechar.
+    const hasRounds = hits + skips + faults > 0;
+    if (hasRounds && !roundsConsistent) {
       return NextResponse.json({ error: "Resultado inconsistente" }, { status: 400 });
     }
     const difficulty = game === "emoji-dos-santos" ? readDifficulty(body.difficulty) : null;

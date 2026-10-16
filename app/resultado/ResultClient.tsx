@@ -80,7 +80,7 @@ export default function ResultClient() {
               ) : (
                 <>
                   <section className={`${styles.stat} ${styles.score}`}><h2>ACERTOS</h2><p>{result.hits}</p></section>
-                  <section className={`${styles.stat} ${styles.time}`}><h2>ERROS</h2><p>{result.faults}</p></section>
+                  <section className={`${styles.stat} ${styles.time}`}><h2>PULOS</h2><p>{result.skips}</p></section>
                 </>
               )}
             </div>
